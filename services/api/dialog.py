@@ -12,6 +12,7 @@ from .router import route
 
 ROOT = Path(__file__).resolve().parents[2]
 PORTAL_DIR = ROOT / "packages/registries/portals"
+BANKS = json.loads((ROOT / "packages/registries/banks.json").read_text(encoding="utf-8"))
 PORTAL_BY_SERVICE = {
     "deposit": "sbi_deposit.json",
     "kcc_loan": "kcc.json",
@@ -102,6 +103,104 @@ def _current_field(session: dict) -> dict | None:
     fields = _fields(session)
     index = session.get("field_index", 0)
     return fields[index] if index < len(fields) else None
+
+
+def input_hint(session: dict) -> str:
+    """Registry-derived input type so the browser can pick endpointing thresholds."""
+
+    field = _current_field(session)
+    if not field:
+        return "short"
+    return {
+        "digits": "digits",
+        "amount": "amount",
+        "number": "amount",
+    }.get(field.get("type", "text"), "name")
+
+
+def field_info(session: dict) -> dict:
+    """Current field metadata for the browser keypad and stepper.
+
+    Derived from the portal registry, never from hardcoded field ids.
+    """
+
+    field = _current_field(session)
+    total = len(_fields(session))
+    return {
+        "type": input_hint(session),
+        "sensitive": bool(field and field.get("sensitive")),
+        "index": total if not field else min(total, session.get("field_index", 0) + 1),
+        "total": total,
+    }
+
+
+def progress(session: dict) -> dict:
+    """Four-step journey position: service, details, confirm, done."""
+
+    state = str(session.get("state", State.IDLE.value))
+    if state == State.SUBMITTED.value:
+        step = 4
+    elif state in {State.CONFIRMING.value, State.CONFIRMING_FIELD.value}:
+        step = 3
+    elif state in {State.NARROWING.value, State.PORTAL_OPEN.value, State.FORM_FILLING.value}:
+        step = 2
+    else:
+        step = 1
+    if state == State.NARROWING.value:
+        # Choosing the bank is not a form field yet; the keypad stays hidden.
+        field = {"type": "short", "sensitive": False, "index": 0, "total": len(_fields(session))}
+    else:
+        field = field_info(session)
+    return {"step": step, "total": 4, "state": state, "field": field}
+
+
+def choices(session: dict) -> list[dict]:
+    """Registry options the user can tap instead of speaking.
+
+    Only narrowing has tap targets today; the list comes from the bank
+    registry so a new bank needs no client change.
+    """
+
+    if session.get("state") != State.NARROWING.value:
+        return []
+    return [
+        {"id": bank["id"], "label": bank["name"], "type": "bank"}
+        for bank in BANKS
+    ]
+
+
+def pending_readback(session: dict) -> str | None:
+    """Digit-safe read-back of the value awaiting confirmation."""
+
+    field = _current_field(session)
+    if not field or "pending_value" not in session:
+        return None
+    return _readback(field, session["pending_value"])
+
+
+def helper_sheet(session: dict) -> dict:
+    """Large-print helper checklist; never includes values or secrets."""
+
+    language = str(session.get("lang", "en"))
+    service = str(session.get("service", ""))
+    portal = _portal(service) if service else {"fields": [], "title": ""}
+    filled = session.get("filled_fields", {})
+    return {
+        "title": str(portal.get("title", "")).replace(" (DEMO)", ""),
+        "language": language,
+        "state": str(session.get("state", State.IDLE.value)),
+        "step": progress(session)["step"],
+        "url": "/",
+        "steps": [
+            {
+                "label": _label(field, language),
+                "type": field.get("type", "text"),
+                "sensitive": bool(field.get("sensitive")),
+                "filled": field["id"] in filled,
+            }
+            for field in portal.get("fields", [])
+        ],
+    }
 
 
 def _language_text(language: str, key: str) -> str:
@@ -371,6 +470,28 @@ def _confirm_field(session: dict, text: str, language: str, trigger: str) -> dic
                 [_action("SHOW_SUMMARY", masked_summary=summary)],
             )
     command = match_command(text)
+    if command is None:
+        # Dictating a corrected number re-reads it without forcing retry/back.
+        corrected = None
+        field = _current_field(session)
+        if field and not field.get("sensitive"):
+            try:
+                candidate = _parse_field(field, text)
+            except (TypeError, ValueError):
+                candidate = None
+            if (
+                candidate is not None
+                and candidate != session.get("pending_value")
+                and _validate(field, candidate) is None
+            ):
+                corrected = candidate
+        if corrected is not None:
+            session["pending_value"] = corrected
+            readback = _readback(field, corrected)
+            return _response(
+                session,
+                f"I heard {_label(field, language)}: {readback}. {_language_text(language, 'confirm')}",
+            )
     if command == "yes":
         field = _current_field(session)
         value = session.pop("pending_value")

@@ -29,11 +29,6 @@ def phase5_server():
     thread.join(timeout=5)
 
 
-@pytest.fixture(scope="session")
-def browser_type_launch_args():
-    return {"args": ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"]}
-
-
 def audio_request():
     return STTRequest(audio=base64.b64encode(b"RIFF" + b"0" * 100).decode(), language="bn")
 
@@ -146,10 +141,52 @@ def test_endpointing_slow_mode_and_low_confidence_reask(page, phase5_server):
     assert result == {"wait": 1800, "reasks": 1}
 
 
-def test_fake_microphone_reaches_stt_proxy(page, phase5_server):
-    page.context.grant_permissions(["microphone"], origin=phase5_server)
-    page.goto(phase5_server + "/")
-    page.locator("#consent-yes").click()
-    page.locator("#mic").click()
-    page.wait_for_timeout(3200)
-    assert "speech" in page.locator("#status").text_content().lower()
+def wait_until(page, predicate, timeout_ms=8000):
+    for _ in range(max(1, timeout_ms // 200)):
+        if predicate():
+            return True
+        page.wait_for_timeout(200)
+    return predicate()
+
+
+def test_fake_microphone_opens_capture_and_reports_a_reason(playwright, phase5_server):
+    # Launch a dedicated browser so the fake media device is guaranteed on
+    # (the session-wide browser may already be running without the flag).
+    browser = playwright.chromium.launch(
+        args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"]
+    )
+    context = browser.new_context()
+    context.grant_permissions(["microphone"], origin=phase5_server)
+    page = context.new_page()
+    try:
+        page.goto(phase5_server + "/")
+        page.locator("#consent-yes").click()
+        page.locator("#app").wait_for(state="visible")
+        page.locator("#mic").click()
+
+        def level():
+            return int(page.locator("#meter").get_attribute("aria-valuenow") or 0)
+
+        def settled():
+            return page.locator("#status").text_content().strip().lower()
+
+        assert wait_until(page, lambda: level() > 0, timeout_ms=15000), "level meter never moved"
+        assert "listening" in page.locator("#mic-label").text_content().lower()
+        page.locator("#mic").click()
+
+        def has_reason():
+            return page.locator("#mic-error").text_content().strip() != ""
+
+        def stopped_thinking():
+            return settled() and not any(word in settled() for word in ("thinking", "processing"))
+
+        assert wait_until(page, has_reason, timeout_ms=25000) or wait_until(
+            page, stopped_thinking, timeout_ms=5000
+        ), "no engine reason and no settled state"
+        status = page.locator("#status").text_content().strip()
+        assert status and status != "No speech heard; type below."
+        assert page.locator("#text").is_enabled()
+        assert page.locator("#engine-badge").text_content().strip()
+    finally:
+        context.close()
+        browser.close()

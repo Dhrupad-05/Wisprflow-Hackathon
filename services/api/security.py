@@ -35,7 +35,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 response = JSONResponse({"detail": "Internal server error"}, status_code=500)
         response.headers.update(
             {
-                "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'",
+                "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-src 'self'; connect-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'",
                 "X-Content-Type-Options": "nosniff",
                 "X-Frame-Options": "SAMEORIGIN",
                 "Referrer-Policy": "no-referrer",
