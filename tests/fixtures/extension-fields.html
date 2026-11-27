@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Field fixture</title></head>
+<body>
+  <form>
+    <label for="full_name">Full name</label>
+    <input id="full_name" name="full_name" data-field="name" type="text">
+    <label for="amount">Amount</label>
+    <input id="amount" name="amount" data-field="amount" type="number">
+    <label for="scheme">Scheme</label>
+    <select id="scheme" name="scheme" data-field="scheme"><option>KCC</option><option>PM-KISAN</option></select>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" value="secret123">
+    <label for="otp">OTP</label>
+    <input id="otp" name="otp" data-field="otp" data-sensitive="true" inputmode="numeric">
+    <input id="hidden_field" type="hidden" name="hidden_field" value="hidden">
+    <button type="button" id="add">Add another field</button>
+  </form>
+  <div id="extra"></div>
+</body>
+</html>

@@ -7,6 +7,7 @@ const SHELL = [
   "/audio.js",
   "/audio-worklet.js",
   "/stt-policy.js",
+  "/site-open.js",
   "/packages/voice/endpointing.js",
   "/packages/voice/vad.js",
   "/packages/voice/bargein.js",

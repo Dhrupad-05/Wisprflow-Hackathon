@@ -146,6 +146,11 @@ def stt_policy_js():
     return FileResponse(WEB / "stt-policy.js", media_type="text/javascript")
 
 
+@app.get("/site-open.js")
+def site_open_js():
+    return FileResponse(WEB / "site-open.js", media_type="text/javascript")
+
+
 @app.get("/packages/voice/endpointing.js")
 def endpointing_js():
     return FileResponse(ROOT / "packages/voice/endpointing.js")
@@ -233,6 +238,16 @@ def mock_ration():
 @app.get("/mock/udyam", response_class=HTMLResponse)
 def mock_udyam():
     return FileResponse(MOCK_PORTALS / "udyam.html")
+
+
+@app.get("/mock/fixture/fields", response_class=HTMLResponse)
+def mock_field_fixture():
+    """Field-scan fixture used by the extension tests."""
+
+    fixture = ROOT / "tests/fixtures/extension-fields.html"
+    if not fixture.exists():
+        raise HTTPException(404, "Fixture not found")
+    return FileResponse(fixture)
 
 
 @app.post("/v1/session")
@@ -330,6 +345,19 @@ def log(sid):
         "events": session["log"],
         "private_mode": session["private_mode"],
     }
+
+
+@app.post("/v1/page/fields")
+def page_fields(body: dict):
+    """Map a page field schema to registry questions. Values are never read."""
+
+    from .page_map import map_page_fields
+
+    return map_page_fields(
+        body.get("fields", []),
+        portal_id=body.get("portal_id"),
+        language=body.get("language", "en"),
+    )
 
 
 @app.post("/v1/stt")

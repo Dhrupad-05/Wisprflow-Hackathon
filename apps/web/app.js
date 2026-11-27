@@ -3,6 +3,7 @@ import { BARGE_DEFAULTS, BargeInMonitor } from "/packages/voice/bargein.js";
 import { END_WORDS, EndpointingEngine } from "/packages/voice/endpointing.js";
 import { VAD_DEFAULTS, VoiceActivityDetector } from "/packages/voice/vad.js";
 import { engineReady, readyEngineNames, serverEngineReady, speechErrorInfo, whisperHeardNothing } from "/stt-policy.js";
+import { absoluteSiteUrl, needsOpenSiteFallback } from "/site-open.js";
 
 const $ = (id) => document.getElementById(id);
 const LANGS = { en: "en-IN", hi: "hi-IN", bn: "bn-IN" };
@@ -642,6 +643,7 @@ async function startSession() {
     body: JSON.stringify({ lang_hint: state.lang, private_mode: state.privateMode })
   });
   state.sid = session.session_id;
+  window.postMessage({ source: "bolo-sahayak", type: "SESSION", session_id: state.sid }, location.origin);
   $("consent-gate").hidden = true;
   $("app").hidden = false;
   setText("notice", state.copy.consent);
@@ -670,6 +672,41 @@ async function openPortal(id) {
   };
   frame.src = portal.url;
 }
+
+function showOpenSiteButton(url, title) {
+  const button = $("open-site");
+  if (!button) return;
+  button.hidden = false;
+  button.textContent = `Open ${title || "site"}`;
+  button.onclick = () => window.open(url, "_blank", "noopener");
+}
+
+function openSite(action) {
+  const url = absoluteSiteUrl(action.url, location.origin);
+  if (!url) return;
+  const title = action.title || "site";
+  const ack = { ok: false };
+  state.siteAck = ack;
+  state.openSiteUrl = url;
+  state.openSiteTitle = title;
+  window.postMessage(
+    { source: "bolo-sahayak", type: "OPEN_SITE", url, portal_id: action.portal_id, mode: action.mode },
+    location.origin
+  );
+  // The extension is the preferred path; this only covers a blocked popup.
+  setTimeout(() => {
+    if (ack.ok) return;
+    const popup = window.open(url, "_blank", "noopener");
+    if (needsOpenSiteFallback(ack, popup)) showOpenSiteButton(url, title);
+  }, 700);
+}
+
+window.addEventListener("message", (event) => {
+  if (event.source !== window || event.origin !== location.origin) return;
+  if (!event.data || event.data.type !== "OPEN_SITE_RESULT") return;
+  if (state.siteAck) state.siteAck.ok = Boolean(event.data.ok);
+  if (!event.data.ok) showOpenSiteButton(state.openSiteUrl || "", state.openSiteTitle);
+});
 
 function postToPortal(action) {
   const frame = $("portal-frame");
@@ -706,6 +743,7 @@ function handleActions(actions = [], prompt = "") {
   if (!state.privacyPending) $("privacy-card").hidden = true;
   actions.forEach((action) => {
     if (action.type === "OPEN_PORTAL" && action.portal !== state.portalId) openPortal(action.portal);
+    if (action.type === "OPEN_SITE") openSite(action);
     if (action.type === "FILL_FIELD") postToPortal(action);
     if (action.type === "AWAIT_USER_INPUT") {
       $("sensitive-done").hidden = false;
@@ -760,6 +798,7 @@ async function send(text, trigger = "typed") {
     if (result.prompt_lang && result.prompt_lang !== state.lang) {
       await switchLanguage(result.prompt_lang);
     }
+    if ($("open-site")) $("open-site").hidden = true;
     state.readback = result.readback || null;
     state.choices = result.choices || [];
     state.lastText = null;

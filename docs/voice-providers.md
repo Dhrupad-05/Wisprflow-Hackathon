@@ -85,6 +85,10 @@ object (`model`, `requested_model`, `downgraded`, `last_latency_ms`, `installed`
 `voice_ready` and `voice_loading`. The UI shows the same state as a chip and a
 startup banner is printed by the server.
 
+- Confirmation now runs before intent routing: a token classifier (`services/api/confirmation.py`) decides yes/no/correction, so “yes, it is correct”, “haan, sahi hai” and “haan thik ache” advance, while “yes but 40,000” is a correction.
+- The in-page bubble speaks and highlights; page speech is never captured in the bank page. Mic audio is recorded in the extension side panel and sent to the same `/v1/stt` and `/v1/turn` session.
+- `OPEN_SITE` URLs come only from `banks.json`, `schemes.json`, and `portals/*.json`; the server, generated `allowlist.js`, content script, and service worker each re-check the HTTPS host.
+
 ## What is verified
 
 * `whisper_local` is covered with a fake model (in-memory WAV, language mapping,

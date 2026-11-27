@@ -1,1 +1,55 @@
-{"id":"sbi_deposit_mock","domain":"banking","service":"deposit","title":"SBI-style Deposit (DEMO)","url":"/mock/sbi/deposit","domains_allowed":["localhost","127.0.0.1"],"fields":[{"id":"account_no","type":"digits","len":11,"sensitive":false,"labels":{"en":"Account number","hi":"खाता नंबर","bn":"অ্যাকাউন্ট নম্বর"}},{"id":"amount","type":"amount","min":1,"max":200000,"labels":{"en":"Amount","hi":"राशि","bn":"টাকার পরিমাণ"}},{"id":"otp","type":"digits","len":6,"sensitive":true,"labels":{"en":"OTP","hi":"ओटीपी","bn":"ওটিপি"}}]}
+{
+  "id": "sbi_deposit_mock",
+  "domain": "banking",
+  "service": "deposit",
+  "bank": "sbi",
+  "title": "SBI-style Deposit (DEMO)",
+  "url": "/mock/sbi/deposit",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": "https://sbi.bank.in",
+  "allowed_domains": [
+    "sbi.bank.in"
+  ],
+  "mock_url": "/mock/sbi/deposit",
+  "login_required": true,
+  "fillable": true,
+  "notes": "Real SBI deposit page requires login; demo fields only in the mock.",
+  "fields": [
+    {
+      "id": "account_no",
+      "type": "digits",
+      "len": 11,
+      "sensitive": false,
+      "labels": {
+        "en": "Account number",
+        "hi": "खाता नंबर",
+        "bn": "অ্যাকাউন্ট নম্বর"
+      }
+    },
+    {
+      "id": "amount",
+      "type": "amount",
+      "min": 1,
+      "max": 200000,
+      "labels": {
+        "en": "Amount",
+        "hi": "राशि",
+        "bn": "টাকার পরিমাণ"
+      }
+    },
+    {
+      "id": "otp",
+      "type": "digits",
+      "len": 6,
+      "sensitive": true,
+      "labels": {
+        "en": "OTP",
+        "hi": "ओटीपी",
+        "bn": "ওটিপি"
+      }
+    }
+  ]
+}

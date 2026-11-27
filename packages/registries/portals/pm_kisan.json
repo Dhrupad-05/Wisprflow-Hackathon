@@ -1,0 +1,20 @@
+{
+  "id": "pm_kisan",
+  "domain": "agriculture",
+  "service": "pm_kisan",
+  "title": "PM-KISAN",
+  "url": "/mock/kcc",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": "https://pmkisan.gov.in",
+  "allowed_domains": [
+    "pmkisan.gov.in"
+  ],
+  "mock_url": null,
+  "login_required": true,
+  "fillable": false,
+  "notes": "Official PM-KISAN portal; registration and eKYC only.",
+  "fields": []
+}
