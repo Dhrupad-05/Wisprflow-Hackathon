@@ -12,7 +12,7 @@ Copy-Item .env.example .env
 python run.py
 ```
 
-Open <http://127.0.0.1:8000>. The page shows `DEMO MODE` when provider keys are absent. Typed input and mock portals work without keys.
+Open <http://127.0.0.1:8000>. Voice works without any provider key: the server runs `faster-whisper` on the CPU and downloads the `small` model (~500 MB) on first use. The page shows `Voice engine loading…` until it is ready, then `Voice ready: Local voice`. Typed input and mock portals always work.
 
 If PowerShell blocks activation, run `Set-ExecutionPolicy -Scope Process Bypass` and activate again. You can also run `.venv\Scripts\python.exe run.py` without activating.
 
@@ -44,7 +44,13 @@ Copy `.env.example` to `.env`. `.env` is server-only and is ignored by Git. Empt
 | `XAI_TTS_API_KEY` | Server-only xAI text-to-speech key. |
 | `XAI_TTS_API_URL` | xAI `/v1/tts` endpoint. |
 | `XAI_TTS_VOICE` | xAI voice id, default `eve`. |
-| `STT_ORDER` | Comma-separated adapter order, default `wispr_api,xai_stt,web_speech,text`. Empty keys, errors, timeouts, unsupported languages and empty transcripts all fall through. |
+| `WHISPER_MODEL` | Local model size, default `small` (`base` is faster, `tiny` is a quick smoke test). Auto-downgrades to `base` when a short utterance takes over 3 s unless this variable is set explicitly. |
+| `WHISPER_MODEL_DIR` | Optional download/cache directory for the model. |
+| `WHISPER_DEVICE` / `WHISPER_COMPUTE_TYPE` | Default `cpu` / `int8`. |
+| `WHISPER_ENABLED` | `1` (default) enables the offline engine; `0` reports it as unavailable. |
+| `WHISPER_PRELOAD` | `1` (default) warms the model at startup in the background. |
+| `WHISPER_AUTO_DOWNGRADE` | `1` (default) drops `small` to `base` after a slow short utterance. |
+| `STT_ORDER` | Comma-separated adapter order, default `wispr_api,whisper_local,xai_stt,web_speech,text`. Empty keys, errors, timeouts, unsupported languages and empty transcripts all fall through. |
 | `GEMINI_API_KEY` | Primary server-only Gemini routing key. |
 | `GEMINI_MODEL` | Gemini routing model. |
 | `XAI_LLM_API_KEY` | Alternate server-only Grok-compatible routing key. |
@@ -58,7 +64,9 @@ Copy `.env.example` to `.env`. `.env` is server-only and is ignored by Git. Empt
 
 `GET /v1/health` reports which engines are configured (`stt`, `llm`, `tts` booleans), the active `stt_order`, and whether voice is ready. The UI shows the same state as a chip plus an engine badge (Wispr / Server voice / Web Speech / Typed / Demo).
 
-With a Wispr or xAI key, `/v1/stt` sends the captured 16 kHz WAV to that server-side adapter and `/v1/tts` returns provider audio to the browser without exposing the key. With no key, `/v1/stt` answers `{text: "", adapter: "text", demo_mode: true, error_code: "empty"}` and the browser automatically starts its own Web Speech recognizer with the same endpointing before showing any "type below" hint.
+With no provider key, `/v1/stt` decodes the captured 16 kHz WAV in memory and transcribes it with `faster-whisper` (`small`, CPU, `int8`) — audio is never written to disk or logged. With a Wispr key, Wispr is tried first; whisper is the fallback. `/v1/tts` returns provider audio to the browser without exposing any key.
+
+The browser only opens its own Web Speech recognizer when the server has no working engine. If `whisper_local` ran and legitimately heard nothing, the app asks the user to try the same microphone again instead of starting a second microphone session. `/v1/health` reports `whisper_local` as `ready`, `loading` or `unavailable`.
 
 ## Tests and evaluation
 
@@ -85,7 +93,8 @@ Open the app at `http://127.0.0.1:8000` (localhost is a secure context). Use the
 | "Microphone needs https:// or http://127.0.0.1" | The page is not a secure context (file://, LAN IP over http). | Use `http://127.0.0.1:8000` or https. |
 | "Microphone permission is blocked" | Chrome denied the mic for this origin. | Click the padlock in the address bar, allow Microphone, reload. |
 | Mic test says "no sound arrived" | Wrong input device or OS-level mic privacy block. | Pick the right device in the mic dropdown; on Windows check Settings → Privacy → Microphone; on macOS check System Settings → Privacy & Security → Microphone. |
-| Level meter moves but text stays empty | No server speech key, so it is in DEMO MODE. | Add `WISPR_API_KEY` (or `XAI_STT_API_KEY`) to `.env`, restart `python run.py`; the chip turns green. |
+| Level meter moves but text stays empty | The local engine is installed but its model failed to load, or no engine is ready. | Open `Voice diagnostics` at the bottom of the assistant panel; `/v1/health` shows `whisper_local`. Reinstall with `python -m pip install -r services/api/requirements.txt`. |
+| "I could not hear speech, please try again" | The local engine transcribed silence (too quiet, wrong device, or a very short clip). | Pick the right input device, tap **Mic test**, then retry. The app does not start a second recognizer here. |
 | "The speech key was rejected" | Provider key is wrong or expired. | Rotate the key in the provider console and update `.env`. |
 | "The speech service could not be reached" | Offline, firewall, or provider outage. | The app falls back to browser Web Speech, then to typed input. |
 | Level meter never moves | Another app holds the mic, or the input is muted. | Close the other app, unmute, and re-run **Mic test**. |

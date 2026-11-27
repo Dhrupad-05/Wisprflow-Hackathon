@@ -7,3 +7,5 @@ ruff==0.9.10
 playwright==1.50.0
 pytest-playwright==0.7.0
 python-dotenv==1.0.1
+# Offline speech-to-text (CPU, int8). The model is downloaded on first use.
+faster-whisper==1.1.1

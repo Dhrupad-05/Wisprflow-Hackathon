@@ -87,6 +87,7 @@
             <div id="level-bar" class="meter-bar"></div>
           </div>
           <p id="status" class="status" aria-live="polite"></p>
+          <p id="mic-detail" class="mic-detail" hidden></p>
           <div class="mic-tools">
             <span id="engine-badge" class="engine" data-engine="demo">Demo</span>
             <label class="sr-only" for="mic-device">Microphone</label>
@@ -94,7 +95,10 @@
             <button id="mic-test" type="button" class="secondary small">Mic test</button>
           </div>
           <p id="mic-test-state" class="mic-note" hidden></p>
-          <p id="mic-error" class="mic-error" role="status" hidden></p>
+          <div id="mic-error" class="mic-banner" role="alert" hidden>
+            <span id="mic-error-text"></span>
+            <button id="mic-error-dismiss" type="button" class="banner-dismiss" aria-label="Dismiss message">×</button>
+          </div>
         </div>
 
         <section class="conversation" aria-label="Conversation">
@@ -122,6 +126,12 @@
         <form id="turn-form"><input id="text" autocomplete="off" placeholder="Type your answer" aria-label="Your response"><button id="send" class="primary">Send</button></form>
         <div class="actions"><button id="retry" class="secondary" type="button" hidden>Try again</button><button id="helper" class="secondary" type="button">Helper sheet</button><button id="wipe" class="secondary">Forget everything</button><button id="print" class="secondary">Print masked log</button></div>
         <button id="sensitive-done" class="done-button" hidden>I’m done</button>
+
+        <details id="voice-diag" class="diag">
+          <summary id="diag-title">Voice diagnostics</summary>
+          <dl id="diag-list" class="diag-list"></dl>
+          <button id="diag-copy" type="button" class="secondary small">Copy diagnostics</button>
+        </details>
       </section>
 
       <section class="portal-panel" aria-label="Portal">

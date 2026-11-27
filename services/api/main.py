@@ -1,8 +1,9 @@
+import asyncio
 import json
 import os
 import time
 import uuid
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, Response
@@ -12,7 +13,14 @@ from dotenv import load_dotenv
 
 from .dialog import choices, handle, helper_sheet, input_hint, pending_readback, progress
 from .entities import detect_language
-from .stt import STTError, STTRequest, stt_order, transcribe
+from .stt import (
+    STTError,
+    STTRequest,
+    preload_whisper,
+    stt_order,
+    transcribe,
+    whisper_health,
+)
 from .tts import TTSError, synthesize
 from .security import SecurityMiddleware, masked_log_text
 
@@ -24,17 +32,28 @@ MOCK_PORTALS = ROOT / "apps/mock-portals"
 
 
 def provider_status() -> dict:
+    whisper = whisper_health()
     stt = {
         "wispr_api": bool(os.getenv("WISPR_API_KEY")),
+        "whisper_local": whisper["status"],
         "xai_stt": bool(os.getenv("XAI_STT_API_KEY")),
     }
     order = stt_order()
-    voice_ready = any(stt.get(name) for name in order)
+    ready = [
+        name
+        for name in order
+        if stt.get(name) is True or stt.get(name) == "ready"
+    ]
+    loading = whisper["status"] == "loading" and "whisper_local" in order
+    voice_ready = bool(ready) or loading
     return {
         "status": "ok",
         "demo_mode": not voice_ready,
         "voice_ready": voice_ready,
+        "voice_loading": loading,
         "stt": stt,
+        "stt_ready": ready,
+        "whisper": whisper,
         "stt_order": order,
         "llm": {
             "gemini": bool(os.getenv("GEMINI_API_KEY")),
@@ -51,15 +70,21 @@ def provider_status() -> dict:
 async def lifespan(_app):
     status = provider_status()
     if status["voice_ready"]:
-        engines = [name for name, ready in status["stt"].items() if ready]
+        engines = status["stt_ready"] or ["whisper_local (loading)"]
         print(f"[Bolo Sahayak] voice enabled via {', '.join(engines)}; STT_ORDER={','.join(status['stt_order'])}", flush=True)
     else:
         print(
-            "[Bolo Sahayak] DEMO MODE: no speech-to-text key found. Typed input and browser Web Speech still work. "
-            "Set WISPR_API_KEY (or XAI_STT_API_KEY) in .env to enable server voice.",
+            "[Bolo Sahayak] DEMO MODE: no speech-to-text engine is available. Typed input still works. "
+            "Set WISPR_API_KEY, or install faster-whisper for local voice.",
             flush=True,
         )
-    yield
+    preload = asyncio.create_task(preload_whisper())
+    try:
+        yield
+    finally:
+        preload.cancel()
+        with suppress(asyncio.CancelledError):
+            await preload
 
 
 app = FastAPI(title="Bolo Sahayak API", lifespan=lifespan)
@@ -114,6 +139,11 @@ def js():
 @app.get("/audio.js")
 def audio_js():
     return FileResponse(WEB / "audio.js")
+
+
+@app.get("/stt-policy.js")
+def stt_policy_js():
+    return FileResponse(WEB / "stt-policy.js", media_type="text/javascript")
 
 
 @app.get("/packages/voice/endpointing.js")
@@ -304,6 +334,7 @@ def log(sid):
 
 @app.post("/v1/stt")
 async def stt(body: dict):
+    status = provider_status()
     try:
         request = STTRequest(
             audio=body.get("audio", ""),
@@ -311,9 +342,21 @@ async def stt(body: dict):
             dictionary_context=body.get("dictionary_context", []),
         )
         request.audio_bytes  # reject bad base64/oversized audio before any provider call
-        return await transcribe(request)
+        return {
+            **await transcribe(request),
+            "server_engine_ready": status["voice_ready"],
+            "whisper": status["whisper"],
+        }
     except STTError as exc:
-        return {"text": "", "adapter": "none", "error_code": exc.code, "errors": [{"adapter": "request", "error": exc.code}], "tried": []}
+        return {
+            "text": "",
+            "adapter": "none",
+            "error_code": exc.code,
+            "errors": [{"adapter": "request", "error": exc.code}],
+            "tried": [],
+            "server_engine_ready": status["voice_ready"],
+            "whisper": status["whisper"],
+        }
 
 
 @app.post("/v1/tts")

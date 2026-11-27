@@ -2,6 +2,7 @@ import { blobToBase64, captureMicrophone, listMicrophones, microphoneAvailable, 
 import { BARGE_DEFAULTS, BargeInMonitor } from "/packages/voice/bargein.js";
 import { END_WORDS, EndpointingEngine } from "/packages/voice/endpointing.js";
 import { VAD_DEFAULTS, VoiceActivityDetector } from "/packages/voice/vad.js";
+import { engineReady, readyEngineNames, serverEngineReady, speechErrorInfo, whisperHeardNothing } from "/stt-policy.js";
 
 const $ = (id) => document.getElementById(id);
 const LANGS = { en: "en-IN", hi: "hi-IN", bn: "bn-IN" };
@@ -41,7 +42,11 @@ const state = {
   field: null,
   choices: [],
   readback: null,
-  lastText: null
+  lastText: null,
+  peakLevel: 0,
+  lastStt: null,
+  lastSpeechError: null,
+  diagAt: 0
 };
 
 const fallback = {
@@ -132,7 +137,25 @@ const fallback = {
   helper_sensitive: "You type this yourself",
   helper_note: "No OTP, PIN, password, CVV or Aadhaar is shown on this sheet. The demo never submits without your yes.",
   helper_url: "Open this address on your helper's phone:",
-  bank_hint: "Tap your bank, or say its name."
+  bank_hint: "Tap your bank, or say its name.",
+  stt_retry: "I could not hear speech, please try again.",
+  engine_whisper: "Local voice",
+  voice_loading: "Voice engine loading…",
+  mic_service_blocked: "This browser's speech service is blocked.",
+  mic_language: "This browser cannot recognise Hindi or Bengali.",
+  mic_aborted: "The browser stopped listening.",
+  mic_invalid_state: "The browser's speech engine was already running.",
+  mic_error_short: "Microphone problem",
+  diag_title: "Voice diagnostics",
+  diag_copy: "Copy diagnostics",
+  diag_copied: "Copied",
+  diag_browser: "Browser",
+  diag_secure: "Secure context",
+  diag_device: "Input device",
+  diag_peak: "Peak level",
+  diag_health: "Server engines",
+  diag_stt: "Last STT",
+  diag_none: "not yet"
 };
 
 const setText = (id, value) => {
@@ -191,6 +214,8 @@ function applyCopy() {
   setText("print", state.copy.print);
   setText("retry", state.copy.retry || fallback.retry);
   setText("helper", state.copy.helper_print || fallback.helper_print);
+  setText("diag-title", state.copy.diag_title || fallback.diag_title);
+  setText("diag-copy", state.copy.diag_copy || fallback.diag_copy);
   setText("assistant-label", state.copy.assistant);
   setText("heard-label", state.copy.heard);
   setText("portal-title", state.copy.portal);
@@ -313,6 +338,7 @@ function renderAnswerTools(mode, field) {
 
 const ENGINE_LABELS = () => ({
   wispr: state.copy.engine_wispr,
+  whisper: state.copy.engine_whisper || fallback.engine_whisper,
   xai: state.copy.engine_xai,
   server: state.copy.engine_xai,
   web: state.copy.engine_web,
@@ -343,19 +369,41 @@ function setMicState(mode) {
 }
 
 function renderLevel(level) {
-  const percent = Math.max(0, Math.min(100, Math.round((Number(level) || 0) * 320)));
+  const value = Number(level) || 0;
+  state.peakLevel = Math.max(state.peakLevel, value);
+  const percent = Math.max(0, Math.min(100, Math.round(value * 320)));
   const bar = $("level-bar");
   const meter = $("meter");
   if (bar) bar.style.width = `${percent}%`;
   if (meter) meter.setAttribute("aria-valuenow", String(percent));
   if (meter) meter.dataset.active = percent > 3 ? "true" : "false";
+  const panel = $("voice-diag");
+  if (panel && panel.open && performance.now() - state.diagAt > 250) {
+    state.diagAt = performance.now();
+    updateDiagnostics();
+  }
 }
 
-function showMicNote(text) {
+function showMicNote(text, tone = "info") {
   const note = $("mic-error");
   if (!note) return;
   note.hidden = !text;
-  note.textContent = text || "";
+  note.dataset.tone = tone;
+  const body = $("mic-error-text");
+  if (body) body.textContent = text || "";
+  else note.textContent = text || "";
+}
+
+function clearMicNote() {
+  showMicNote("");
+  setMicDetail("");
+}
+
+function setMicDetail(text) {
+  const detail = $("mic-detail");
+  if (!detail) return;
+  detail.hidden = !text;
+  detail.textContent = text || "";
 }
 
 function focusText() {
@@ -368,17 +416,37 @@ async function loadHealth() {
     const health = await api("/v1/health", {}, 6000);
     state.health = health;
     const chip = $("health-chip");
+    const labels = {
+      wispr_api: fallback.engine_wispr,
+      whisper_local: fallback.engine_whisper,
+      xai_stt: fallback.engine_xai
+    };
+    const engines = readyEngineNames(health).map((name) => labels[name] || name);
     if (chip) {
-      const engines = Object.entries(health.stt || {})
-        .filter(([, ready]) => ready)
-        .map(([name]) => (name === "wispr_api" ? fallback.engine_wispr : fallback.engine_xai));
       chip.hidden = false;
       chip.dataset.mode = health.demo_mode ? "demo" : "voice";
-      chip.textContent = health.voice_ready
-        ? `${state.copy.voice_ready || fallback.voice_ready}: ${engines.join(", ")}`
-        : state.copy.demo_hint || fallback.demo_hint;
+      if (engines.length) {
+        chip.textContent = `${state.copy.voice_ready || fallback.voice_ready}: ${engines.join(", ")}`;
+      } else if (health.voice_loading) {
+        chip.textContent = state.copy.voice_loading || fallback.voice_loading;
+        chip.dataset.mode = "voice";
+      } else {
+        chip.textContent = state.copy.demo_hint || fallback.demo_hint;
+      }
     }
-    setEngine(health.voice_ready ? (health.stt && health.stt.wispr_api ? "wispr" : "xai") : "demo");
+    if (health.stt && health.stt.wispr_api === true) setEngine("wispr");
+    else if (health.stt && health.stt.whisper_local === "ready") setEngine("whisper");
+    else if (engineReady(health)) setEngine("xai");
+    else setEngine("demo");
+    updateDiagnostics();
+    // Keep polling while the local model warms up so the chip leaves
+    // "Voice engine loading…" without a manual reload.
+    if (health.voice_loading && !state.healthPoll) {
+      state.healthPoll = setTimeout(() => {
+        state.healthPoll = null;
+        loadHealth();
+      }, 2000);
+    }
   } catch {
     // Diagnostics are best-effort; the typed path still works.
   }
@@ -761,9 +829,13 @@ function showMicError(error) {
   const code = error instanceof MicrophoneError ? error.code : (error && error.code) || "microphone-error";
   const message = micErrorMessage(code);
   setMicState("error");
-  setStatus(message);
-  showMicNote(message);
+  // The banner carries the detail; the status stays short so the two never
+  // repeat the same sentence.
+  setStatus(state.copy.mic_error_short || fallback.mic_error_short);
+  showMicNote(message, "error");
+  setMicDetail(`microphone: ${code}`);
   renderLevel(0);
+  updateDiagnostics();
   focusText();
 }
 
@@ -866,6 +938,7 @@ function adoptBargeMonitor(monitor) {
   beginLiveTranscript();
   setMicState("listening");
   setStatus(state.copy.interrupted || fallback.interrupted);
+  state.peakLevel = 0;
   renderLevel(0);
   state.micGranted = true;
 }
@@ -965,20 +1038,46 @@ function stopRecognition() {
   setMicState("idle");
 }
 
-function recognitionFailed(code, recognition) {
+function recognitionFailed(info, recognition) {
+  const parsed = typeof info === "string" ? speechErrorInfo(info) : info;
   if (state.recognition === recognition) state.recognition = null;
-  if (state.endpoint) state.endpoint.cancel();
+  if (state.endpoint) {
+    state.endpoint.cancel();
+    state.endpoint = null;
+  }
   try { recognition.abort(); } catch { /* already stopped */ }
   setMicState("idle");
   setEngine("typed");
-  const message = micErrorMessage(code) || state.copy.stt_failed;
-  setStatus(message);
-  showMicNote(`${message} ${state.copy.type_instead || fallback.type_instead}`);
+  const message = state.copy[parsed.key] || micErrorMessage(parsed.code) || state.copy.stt_failed;
+  setStatus(state.copy.mic_error_short || fallback.mic_error_short);
+  showMicNote(`${message} ${state.copy.type_instead || fallback.type_instead}`, "error");
+  setMicDetail(parsed.detail || parsed.code);
+  state.lastSpeechError = parsed.detail || parsed.code;
+  updateDiagnostics();
   focusText();
 }
 
-function startWebSpeech(reasonMessage) {
+/** Close every microphone channel before the browser recognizer opens its own. */
+async function releaseMicForRecognition() {
+  stopBargeMonitor();
+  const capture = state.capture;
+  state.capture = null;
+  if (state.endpoint) {
+    state.endpoint.cancel();
+    state.endpoint = null;
+  }
+  if (capture) {
+    try { await capture.stop({ discard: true }); } catch { /* already closed */ }
+  }
+  renderLevel(0);
+  // Give the device a beat to finish tearing down before a new session starts.
+  await new Promise((resolve) => setTimeout(resolve, 120));
+}
+
+async function startWebSpeech(reasonMessage) {
   if (state.recognition) return;
+  if (state.capture || state.bargeMonitor) await releaseMicForRecognition();
+  if (state.capture || state.bargeMonitor || state.recognition) return;
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!Recognition) {
     setEngine("typed");
@@ -1026,15 +1125,9 @@ function startWebSpeech(reasonMessage) {
     endpoint.update(transcript, confidence);
   };
   recognition.onerror = (event) => {
-    const map = {
-      "not-allowed": "permission-denied",
-      "service-not-allowed": "permission-denied",
-      "audio-capture": "no-device",
-      "no-speech": "empty",
-      network: "offline",
-      aborted: "empty"
-    };
-    recognitionFailed(map[event.error] || "microphone-error", recognition);
+    const raw = (event && event.error) || "microphone-error";
+    console.log("[bolo] SpeechRecognition error", raw, event);
+    recognitionFailed(speechErrorInfo(raw), recognition);
   };
   recognition.onend = () => {
     if (state.recognition === recognition) state.recognition = null;
@@ -1048,11 +1141,14 @@ function startWebSpeech(reasonMessage) {
   setEngine("web");
   setMicState("listening");
   setStatus(state.copy.listening);
-  showMicNote(state.copy.using_browser);
+  showMicNote(state.copy.using_browser, "info");
+  setMicDetail("SpeechRecognition: starting");
   try {
     recognition.start();
-  } catch {
-    recognitionFailed("microphone-error", recognition);
+  } catch (error) {
+    const name = error && error.name === "InvalidStateError" ? "invalid-state" : "microphone-error";
+    console.log("[bolo] SpeechRecognition.start failed", error);
+    recognitionFailed(speechErrorInfo(name), recognition);
   }
 }
 
@@ -1071,23 +1167,45 @@ async function handleCapturedAudio(blob, reason) {
           language: state.lang,
           dictionary_context: ["SBI", "Kisan Credit Card", "Udyam", "PM-KISAN"]
         })
-      }, 25000);
+      }, 60000);
     } catch {
       result = { text: "", adapter: "none", error_code: "offline" };
     }
+    state.lastStt = {
+      adapter: result.adapter,
+      error_code: result.error_code,
+      errors: result.errors || [],
+      tried: result.tried || [],
+      textLength: String(result.text || "").length,
+      at: new Date().toISOString()
+    };
     const text = String((result && result.text) || "").trim();
     if (text) {
       const adapter = result.adapter;
-      setEngine(adapter === "wispr_api" ? "wispr" : adapter === "xai_stt" ? "xai" : "server");
-      showMicNote("");
+      setEngine(
+        adapter === "wispr_api" ? "wispr"
+          : adapter === "whisper_local" ? "whisper"
+            : adapter === "xai_stt" ? "xai" : "server"
+      );
+      clearMicNote();
       setHeard(text);
-      send(text, hasEndWord(text) ? "end_word" : "typed");
+      updateDiagnostics();
+      await send(text, hasEndWord(text) ? "end_word" : "typed");
       return;
     }
-    const message = sttReason(result);
+    const noSpeech = whisperHeardNothing(result);
+    const message = noSpeech ? (state.copy.stt_retry || fallback.stt_retry) : sttReason(result);
     setStatus(message);
     setMicState("idle");
-    startWebSpeech(message);
+    updateDiagnostics();
+    // A local engine heard nothing: retry the same mic. Starting Web Speech
+    // here would open a second microphone session and hide the real error.
+    if (noSpeech || serverEngineReady(result, state.health)) {
+      showMicNote(message, "error");
+      focusText();
+      return;
+    }
+    await startWebSpeech(message);
   } finally {
     state.finishing = false;
   }
@@ -1118,7 +1236,12 @@ async function finishCapture(reason = "pause") {
     const message = state.copy.heard_nothing || fallback.heard_nothing;
     setStatus(message);
     setMicState("idle");
-    startWebSpeech(message);
+    if (engineReady(state.health)) {
+      showMicNote(message, "error");
+      focusText();
+      return;
+    }
+    await startWebSpeech(message);
     return;
   }
   setMicState("thinking");
@@ -1157,6 +1280,7 @@ async function startMicrophone() {
 
   setMicState("listening");
   setStatus(state.copy.listening);
+  state.peakLevel = 0;
   renderLevel(0);
   beginLiveTranscript();
   try {
@@ -1219,6 +1343,79 @@ async function runMicTest() {
     renderLevel(0);
     state.micTest = false;
   }
+}
+
+/* Voice diagnostics: only shown when the operator opens the panel. */
+
+function browserName() {
+  const data = navigator.userAgentData;
+  if (data && data.brands && data.brands.length) {
+    return data.brands.map((brand) => `${brand.brand} ${brand.version}`).join(", ");
+  }
+  const match = String(navigator.userAgent).match(/(Edg|OPR|Chrome|Firefox|Safari)\/([\d.]+)/);
+  return match ? `${match[1]} ${match[2]}` : String(navigator.userAgent).slice(0, 80);
+}
+
+function diagRows() {
+  const copy = state.copy;
+  const health = state.health || {};
+  const engines = Object.entries(health.stt || {})
+    .filter(([name]) => name !== "web_speech" && name !== "text")
+    .map(([name, value]) => `${name}=${value === true ? "configured" : value}`);
+  const select = $("mic-device");
+  const selected = select && select.selectedOptions && select.selectedOptions[0];
+  const last = state.lastStt;
+  const errorLine = last && (last.errors || []).length
+    ? last.errors.map((item) => `${item.adapter}:${item.error}`).join(", ")
+    : "none";
+  const sttLine = last
+    ? `${last.adapter} code=${last.error_code || "ok"} len=${last.textLength} errors=[${errorLine}] tried=${(last.tried || []).join(">")}`
+    : copy.diag_none || fallback.diag_none;
+  return [
+    [copy.diag_browser || fallback.diag_browser, browserName()],
+    [copy.diag_secure || fallback.diag_secure, window.isSecureContext ? "yes" : "no"],
+    [copy.diag_device || fallback.diag_device, selected ? selected.textContent : "default"],
+    [copy.diag_peak || fallback.diag_peak, `${Math.round(state.peakLevel * 320)}%`],
+    [copy.diag_health || fallback.diag_health, engines.length ? engines.join(" · ") : "none"],
+    [copy.diag_stt || fallback.diag_stt, sttLine],
+    ["SpeechRecognition", state.lastSpeechError || "none"]
+  ];
+}
+
+function updateDiagnostics() {
+  const list = $("diag-list");
+  if (!list) return;
+  const rows = diagRows();
+  list.replaceChildren(
+    ...rows.flatMap(([label, value]) => {
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const detail = document.createElement("dd");
+      detail.textContent = value;
+      return [term, detail];
+    })
+  );
+}
+
+if ($("voice-diag")) {
+  $("voice-diag").addEventListener("toggle", updateDiagnostics);
+}
+if ($("diag-copy")) {
+  $("diag-copy").onclick = async () => {
+    const text = diagRows().map(([label, value]) => `${label}: ${value}`).join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      $("diag-copy").textContent = state.copy.diag_copied || fallback.diag_copied;
+      setTimeout(() => {
+        $("diag-copy").textContent = state.copy.diag_copy || fallback.diag_copy;
+      }, 1500);
+    } catch {
+      showMicNote("Clipboard blocked — open the diagnostics list and copy the text.", "info");
+    }
+  };
+}
+if ($("mic-error-dismiss")) {
+  $("mic-error-dismiss").onclick = () => clearMicNote();
 }
 
 $("consent-lang").onchange = async (event) => {
