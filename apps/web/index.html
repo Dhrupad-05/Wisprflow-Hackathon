@@ -3,39 +3,135 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1e3a8a">
   <title>Bolo Sahayak</title>
   <link rel="stylesheet" href="/styles.css">
+  <link rel="manifest" href="/manifest.webmanifest">
 </head>
 <body>
   <div id="consent-gate" class="overlay">
-    <section class="consent-card" role="dialog" aria-modal="true" aria-labelledby="consent-title">
-      <span class="eyebrow">BOLO SAHAYAK</span>
-      <h1 id="consent-title">Bolo Sahayak</h1>
-      <p id="consent-text">Your words stay in this demo session.</p>
-      <label class="field-label" for="consent-lang">Language
-        <select id="consent-lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select>
-      </label>
-      <button id="consent-yes" class="primary">Continue</button>
-    </section>
+    <div class="consent-shell">
+      <aside class="consent-aside" aria-hidden="true">
+        <span class="brand-mark">बो</span>
+        <h2>Bolo Sahayak</h2>
+        <p class="tagline" id="consent-tagline">Voice-first help with government forms.</p>
+        <ul class="consent-points">
+          <li><span class="point-icon">🎙️</span><span id="consent-point-1">Speak, type or tap — your choice.</span></li>
+          <li><span class="point-icon">🔒</span><span id="consent-point-2">OTP, PIN and passwords are only ever typed by you.</span></li>
+          <li><span class="point-icon">✅</span><span id="consent-point-3">Nothing is submitted without your explicit yes.</span></li>
+        </ul>
+      </aside>
+      <section class="consent-card" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+        <span class="eyebrow">BOLO SAHAYAK</span>
+        <h1 id="consent-title">Bolo Sahayak</h1>
+        <p id="consent-text" class="wrap-text">This demo may send your speech to the configured speech provider.</p>
+        <details class="consent-more">
+          <summary>How voice is handled</summary>
+          <p class="wrap-text">Speech is transcribed by the configured provider (Wispr Flow or xAI). No audio is stored on this device or server. OTP, PIN, password, CVV and full Aadhaar are typed by you and are never captured by voice, auto-filled, or logged.</p>
+        </details>
+        <label class="field-label" for="consent-lang">Language
+          <select id="consent-lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select>
+        </label>
+        <button id="consent-yes" class="primary block">Continue</button>
+        <p class="consent-note">Mock portals only · Voice never authenticates · No audio is stored</p>
+      </section>
+    </div>
   </div>
+
   <main id="app" hidden>
     <header class="topbar">
-      <div><span class="eyebrow">BOLO SAHAYAK</span><h1>Bolo Sahayak</h1></div>
-      <div class="top-actions"><span id="demo-badge" class="demo">DEMO MODE</span><label class="field-label" for="lang">Language<select id="lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select></label></div>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">बो</span>
+        <div>
+          <span class="eyebrow">BOLO SAHAYAK</span>
+          <h1>Bolo Sahayak</h1>
+          <p class="tagline" id="tagline">Voice-first help with government forms.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span id="health-chip" class="health-chip" hidden>DEMO MODE</span>
+        <label class="field-label" for="lang">Language
+          <select id="lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select>
+        </label>
+      </div>
     </header>
-    <section id="notice" class="notice" aria-live="polite"></section>
+
+    <nav class="stepper-wrap" aria-label="Progress">
+      <ol id="stepper" class="stepper"></ol>
+      <p id="step-note" class="step-note" aria-live="polite"></p>
+      <p id="lang-note" class="step-note" role="status"></p>
+    </nav>
+
+    <section id="notice-card" class="notice" aria-label="Privacy notice">
+      <button id="notice-toggle" type="button" class="notice-toggle" aria-expanded="true" aria-controls="notice">Privacy and consent</button>
+      <p id="notice" class="notice-text wrap-text"></p>
+    </section>
+
     <div class="layout">
       <section class="assistant-panel" aria-label="Assistant">
         <div id="privacy-card" class="privacy-card" hidden><strong id="privacy-text"></strong><div id="privacy-chips" class="chips"></div></div>
-        <div class="controls"><label class="toggle"><input type="checkbox" id="private"> <span id="private-label">Private mode</span></label><label class="toggle"><input type="checkbox" id="slow"> <span id="slow-label">Slow speaker</span></label></div>
-        <div class="hero"><button id="mic" class="mic" aria-label="Start voice input">🎙️<span id="mic-label">Tap to speak</span></button><div id="status" class="status" aria-live="polite"></div></div>
-        <section class="conversation"><div class="heard"><span id="assistant-label">Assistant</span><strong id="prompt"></strong></div><div class="heard user"><span id="heard-label">You said</span><strong id="heard">—</strong></div><div id="summary" class="summary" hidden></div><div id="voice-note" class="voice-note" hidden></div></section>
-        <div id="quick-replies" class="chips"></div>
+
+        <div class="controls">
+          <label class="toggle"><input type="checkbox" id="private"> <span id="private-label">Private mode</span></label>
+          <label class="toggle"><input type="checkbox" id="slow"> <span id="slow-label">Slow speaker</span></label>
+          <label class="toggle"><input type="checkbox" id="barge-in" checked> <span id="barge-label">Interrupt me</span></label>
+        </div>
+
+        <div class="hero">
+          <button id="mic" class="mic mic-idle" aria-label="Start voice input" aria-pressed="false">
+            <span class="mic-icon" aria-hidden="true">🎙️</span>
+            <span id="mic-label">Tap to speak</span>
+          </button>
+          <div id="meter" class="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="level-bar" class="meter-bar"></div>
+          </div>
+          <p id="status" class="status" aria-live="polite"></p>
+          <div class="mic-tools">
+            <span id="engine-badge" class="engine" data-engine="demo">Demo</span>
+            <label class="sr-only" for="mic-device">Microphone</label>
+            <select id="mic-device" class="device-select" aria-label="Microphone"></select>
+            <button id="mic-test" type="button" class="secondary small">Mic test</button>
+          </div>
+          <p id="mic-test-state" class="mic-note" hidden></p>
+          <p id="mic-error" class="mic-error" role="status" hidden></p>
+        </div>
+
+        <section class="conversation" aria-label="Conversation">
+          <div class="heard assistant">
+            <span class="prompt-avatar" aria-hidden="true">बो</span>
+            <div><span id="assistant-label">Assistant</span><strong id="prompt"></strong></div>
+          </div>
+          <div class="heard user"><span id="heard-label">What I heard</span><strong id="heard">—</strong></div>
+          <div id="summary" class="summary" hidden></div>
+          <div id="voice-note" class="voice-note" hidden></div>
+        </section>
+
+        <div id="live-wrap" class="live-wrap" hidden>
+          <label class="live-label" for="live" id="live-label">Live transcript — edit before it sends</label>
+          <textarea id="live" class="live-input" rows="2" spellcheck="false" autocomplete="off" placeholder="Your words appear here…"></textarea>
+          <p class="live-hint" id="live-hint">You can fix words while speaking. Press Enter to send.</p>
+        </div>
+
+        <section class="answer-tools" aria-label="Answers">
+          <p id="answer-hint" class="step-note" hidden></p>
+          <div id="digit-pad" class="digit-pad" aria-label="Digit keypad" hidden></div>
+          <div id="quick-replies" class="chips"></div>
+        </section>
+
         <form id="turn-form"><input id="text" autocomplete="off" placeholder="Type your answer" aria-label="Your response"><button id="send" class="primary">Send</button></form>
-        <div class="actions"><button id="wipe" class="secondary">Forget everything</button><button id="print" class="secondary">Print masked log</button></div>
+        <div class="actions"><button id="retry" class="secondary" type="button" hidden>Try again</button><button id="helper" class="secondary" type="button">Helper sheet</button><button id="wipe" class="secondary">Forget everything</button><button id="print" class="secondary">Print masked log</button></div>
         <button id="sensitive-done" class="done-button" hidden>I’m done</button>
       </section>
-      <section class="portal-panel" aria-label="Portal"><h2 id="portal-title">Portal preview</h2><p id="portal-empty">Your selected demo form will appear here.</p><iframe id="portal-frame" title="Demo portal" hidden></iframe></section>
+
+      <section class="portal-panel" aria-label="Portal">
+        <div class="portal-head">
+          <h2 id="portal-title">Demo portal</h2>
+          <span class="portal-badge">DEMO</span>
+        </div>
+        <p id="portal-empty">Your selected demo form will appear here.</p>
+        <iframe id="portal-frame" title="Demo portal" hidden></iframe>
+      </section>
     </div>
     <p class="fine">Mock portals only · Voice never authenticates · No audio is stored</p>
   </main>

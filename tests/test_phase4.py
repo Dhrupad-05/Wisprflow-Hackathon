@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 import uvicorn
+from playwright.sync_api import expect
 
 from services.api.main import app
 
@@ -54,16 +55,19 @@ def test_e1_bengali_typed_flow_fills_real_iframe_and_submits_after_yes(
     page.locator("#portal-frame").wait_for(state="visible")
     say(page, "one two three four five six seven eight nine zero one")
     page.locator("[data-command='yes']").click()
-    assert frame.locator("[data-field='account_no']").input_value() == "12345678901"
+    expect(frame.locator("[data-field='account_no']")).to_have_value("12345678901")
     say(page, "paanch hazaar")
     page.locator("[data-command='yes']").click()
-    assert frame.locator("[data-field='amount']").input_value() == "5000"
+    expect(frame.locator("[data-field='amount']")).to_have_value("5000")
     page.locator("[data-command='no']").click()
+    expect(page.locator("#prompt")).not_to_contain_text("Is anyone near", timeout=10000)
+    expect(page.locator("#sensitive-done")).to_be_visible()
     frame.locator("[data-field='otp']").fill("123456")
     page.locator("#sensitive-done").click()
+    expect(page.locator("#status")).to_have_text("CONFIRMING")
     assert frame.locator("[data-step='success']").is_hidden()
     page.locator("[data-command='yes']").click()
-    assert frame.locator("[data-step='success']").is_visible()
+    expect(frame.locator("[data-step='success']")).to_be_visible()
 
 
 @pytest.mark.parametrize("language", ["en", "hi", "bn"])
@@ -88,7 +92,7 @@ def test_e3_routes_cancel_forget_and_digit_correction(page, phase4_server):
     consent(page, phase4_server)
     say(page, "deposit")
     say(page, "cancel")
-    assert "CANCEL" in page.locator("#status").text_content().upper()
+    expect(page.locator("#status")).to_contain_text("CANCEL")
     page.locator("#wipe").click()
     page.locator("#consent-gate").wait_for(state="visible")
     consent(page, phase4_server)
