@@ -110,6 +110,12 @@ Follow [DEMO_SCRIPT.md](DEMO_SCRIPT.md). The shortest path is: consent, type `Am
 
 The UI captures 16 kHz PCM16 WAV through an `AudioWorklet` (with a `ScriptProcessor` fallback), stops on energy-based endpointing instead of a fixed timer, and shows a live level meter, engine badge, and a three-second mic test. Capture falls through Wispr Flow → optional xAI → browser Web Speech → typed input, and every degradation has a plain-language reason on screen. Load `apps/extension` as an unpacked MV3 extension in Chrome/Chromium for allow-listed mock-origin field filling. It refuses OTP, PIN, password, CVV, Aadhaar, and unlisted origins.
 
+- Confirmations are intent-based: one yes advances (pending intent, field, or summary) instead of re-asking; “yes, it is correct”/“haan, sahi hai”/“haan thik ache” all match, and “yes but 40,000”/“no, SBI” counts as a correction.
+- After the intent yes, the server emits `OPEN_SITE {url, portal_id, mode}` from the registry only (`official_url` per bank/scheme/portal); `DEMO_USE_MOCK=true` swaps in the mock URL. The extension opens the tab (`chrome.tabs.create`) and the page offers an “Open site” button if a popup is blocked.
+- Official domains are HTTPS and allow-listed end to end: server resolver, generated `allowlist.js`, content script, and service worker. Unknown sites offer up to three registry options.
+- On allow-listed pages the extension adds a 56 px Shadow-DOM bubble with idle/listening/thinking/speaking/error states, Yes/No/Repeat/Stop, language, and a typed fallback. Mic capture stays in the extension side panel, and the page is already open, so state continues on the same `session_id`.
+- Only a visible-field schema (label, type, options, sensitivity) leaves the page; values never do. Sensitive fields are highlighted and spoken, never filled. Submit is sent only on explicit yes for localhost mock portals.
+
 See [docs/voice-providers.md](docs/voice-providers.md) for the server-only key mapping and pipeline.
 
 ## Safety and limitations

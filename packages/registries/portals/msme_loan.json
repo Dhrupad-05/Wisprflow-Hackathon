@@ -1,0 +1,18 @@
+{
+  "id": "msme_loan_mock",
+  "domain": "msme",
+  "service": "msme_loan",
+  "title": "MSME loan",
+  "url": "/mock/udyam",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": null,
+  "allowed_domains": [],
+  "mock_url": null,
+  "login_required": true,
+  "fillable": false,
+  "notes": "Bank-specific MSME lending page: use the selected bank's official_url.",
+  "fields": []
+}

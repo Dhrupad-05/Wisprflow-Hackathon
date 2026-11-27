@@ -1,15 +1,15 @@
 [
-  {"id":"sbi","name":"State Bank of India","aliases":["sbi","esbiai","state bank","स्टेट बैंक","স্টেট ব্যাংক"]},
-  {"id":"uco","name":"UCO Bank","aliases":["uco","yuko","यूको बैंक"]},
-  {"id":"pnb","name":"Punjab National Bank","aliases":["pnb","punjab national","पीएनबी","पंजाब नेशनल"]},
-  {"id":"bob","name":"Bank of Baroda","aliases":["bob","baroda bank","बैंक ऑफ बड़ौदा"]},
-  {"id":"canara","name":"Canara Bank","aliases":["canara","kanara","केनरा बैंक"]},
-  {"id":"hdfc","name":"HDFC Bank","aliases":["hdfc","h d f c","एचडीएफसी"]},
-  {"id":"icici","name":"ICICI Bank","aliases":["icici","i c i c i","आईसीआईसीआई"]},
-  {"id":"axis","name":"Axis Bank","aliases":["axis","अॅक्सिस बैंक","एक्सिस बैंक"]},
-  {"id":"indian","name":"Indian Bank","aliases":["indian bank","इंडियन बैंक"]},
-  {"id":"union","name":"Union Bank of India","aliases":["union bank","यूनियन बैंक"]},
-  {"id":"boi","name":"Bank of India","aliases":["boi","bank of india","बैंक ऑफ इंडिया"]},
-  {"id":"idbi","name":"IDBI Bank","aliases":["idbi","आईडीबीआई"]},
-  {"id":"grameen","name":"Gramin Bank","aliases":["gramin bank","grameen bank","ग्रामीण बैंक"]}
+  {"id":"sbi","name":"State Bank of India","aliases":["sbi","esbiai","state bank","स्टेट बैंक","স্টেট ব্যাংক"],"official_url":"https://sbi.bank.in","allowed_domains":["sbi.bank.in"],"login_required":true,"notes":"Corporate site migrated from sbi.co.in to sbi.bank.in (verified on the bank's redirect page)."},
+  {"id":"uco","name":"UCO Bank","aliases":["uco","yuko","यूको बैंक"],"official_url":"https://uco.bank.in","allowed_domains":["uco.bank.in"],"login_required":true,"notes":"ucobank.com announces migration to uco.bank.in."},
+  {"id":"pnb","name":"Punjab National Bank","aliases":["pnb","punjab national","पीएनबी","पंजाब नेशनल"],"official_url":"https://pnb.bank.in","allowed_domains":["pnb.bank.in"],"login_required":true,"notes":"Listed as pnb.bank.in by the Department of Financial Services."},
+  {"id":"bob","name":"Bank of Baroda","aliases":["bob","baroda bank","बैंक ऑफ बड़ौदा"],"official_url":"https://bankofbaroda.bank.in","allowed_domains":["bankofbaroda.bank.in"],"login_required":true,"notes":"bankofbaroda.in announces migration to bankofbaroda.bank.in."},
+  {"id":"canara","name":"Canara Bank","aliases":["canara","kanara","केनरा बैंक"],"official_url":"https://canarabank.bank.in","allowed_domains":["canarabank.bank.in"],"login_required":true,"notes":"Listed as canarabank.bank.in by the Department of Financial Services."},
+  {"id":"hdfc","name":"HDFC Bank","aliases":["hdfc","h d f c","एचडीएफसी"],"official_url":"https://www.hdfcbank.com","allowed_domains":["hdfcbank.com"],"login_required":true,"notes":"Private bank; not on the DFS public-sector list."},
+  {"id":"icici","name":"ICICI Bank","aliases":["icici","i c i c i","आईसीआईसीआई"],"official_url":"https://www.icicibank.com","allowed_domains":["icicibank.com"],"login_required":true,"notes":"Private bank; not on the DFS public-sector list."},
+  {"id":"axis","name":"Axis Bank","aliases":["axis","अॅक्सिस बैंक","एक्सिस बैंक"],"official_url":"https://www.axisbank.com","allowed_domains":["axisbank.com"],"login_required":true,"notes":"Private bank; not on the DFS public-sector list."},
+  {"id":"indian","name":"Indian Bank","aliases":["indian bank","इंडियन बैंक"],"official_url":"https://indianbank.bank.in","allowed_domains":["indianbank.bank.in"],"login_required":true,"notes":"Listed as indianbank.bank.in by the Department of Financial Services."},
+  {"id":"union","name":"Union Bank of India","aliases":["union bank","यूनियन बैंक"],"official_url":"https://unionbankofindia.bank.in","allowed_domains":["unionbankofindia.bank.in"],"login_required":true,"notes":"Listed as unionbankofindia.bank.in by the Department of Financial Services."},
+  {"id":"boi","name":"Bank of India","aliases":["boi","bank of india","बैंक ऑफ इंडिया"],"official_url":"https://bankofindia.bank.in","allowed_domains":["bankofindia.bank.in"],"login_required":true,"notes":"Listed as bankofindia.bank.in by the Department of Financial Services."},
+  {"id":"idbi","name":"IDBI Bank","aliases":["idbi","आईडीबीआई"],"official_url":"https://www.idbi.com","allowed_domains":["idbi.com"],"login_required":true,"notes":"Private bank; not on the DFS public-sector list."},
+  {"id":"grameen","name":"Gramin Bank","aliases":["gramin bank","grameen bank","ग्रामीण बैंक"],"official_url":null,"allowed_domains":[],"login_required":true,"notes":"TODO: regional rural banks each have their own site; no single official URL."}
 ]

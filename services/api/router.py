@@ -32,7 +32,7 @@ RULES = [
     ("agriculture", "kcc_loan", ("kisan credit", "kcc", "farmer loan", "farmer credit", "agri loan", "agriculture loan", "farming", "crop loan", "crops", "\u0916\u0947\u0924\u0940", "\u0915\u0943\u0937\u093f", "\u092b\u0938\u0932", "\u0995\u09c3\u09b7\u09bf \u098b\u09a3", "\u099a\u09be\u09b7\u09c7\u09b0", "chashi", HINDI["kisan"], BENGALI["farmer"]), 0.94),
     ("agriculture", "subsidy", ("subsidy", "\u0905\u0928\u0941\u0926\u093e\u0928", "\u09ad\u09b0\u09cd\u09a4\u09c1\u0995\u09bf"), 0.86),
     ("banking", "deposit", ("deposit", "jama", "save money", "savings", "save", "add money", "put money", "\u092c\u091a\u0924", "\u0938\u0902\u091a\u092f", "\u09b8\u099e\u09cd\u099a\u09af\u09bc", HINDI["deposit"], BENGALI["deposit"]), 0.95),
-    ("banking", "loan", ("loan", HINDI["loan"], BENGALI["loan"]), 0.82),
+    ("banking", "loan", ("loan", "borrow", "udhaar", "udhar", "\u0909\u0927\u093e\u0930", "\u09a7\u09be\u09b0", HINDI["loan"], BENGALI["loan"]), 0.9),
     ("banking", "account", ("account", HINDI["account"], "\u0985\u09cd\u09af\u09be\u0995\u09be\u0989\u09a8\u09cd\u099f"), 0.82),
 ]
 

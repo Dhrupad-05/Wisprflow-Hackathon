@@ -1,1 +1,50 @@
-{"id":"kcc_loan_mock","domain":"agriculture","service":"kcc_loan","title":"Kisan Credit Card (DEMO)","url":"/mock/kcc","domains_allowed":["localhost","127.0.0.1"],"fields":[{"id":"farmer_name","type":"text","labels":{"en":"Farmer name","hi":"किसान का नाम","bn":"কৃষকের নাম"}},{"id":"amount","type":"amount","min":1000,"max":500000,"labels":{"en":"Loan amount","hi":"ऋण राशि","bn":"ঋণের পরিমাণ"}},{"id":"otp","type":"digits","len":6,"sensitive":true,"labels":{"en":"OTP","hi":"ओटीपी","bn":"ওটিপি"}}]}
+{
+  "id": "kcc_loan_mock",
+  "domain": "agriculture",
+  "service": "kcc_loan",
+  "title": "Kisan Credit Card (DEMO)",
+  "url": "/mock/kcc",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": null,
+  "allowed_domains": [],
+  "mock_url": "/mock/kcc",
+  "login_required": true,
+  "fillable": true,
+  "notes": "TODO: apply through the selected bank; no central KCC portal.",
+  "fields": [
+    {
+      "id": "farmer_name",
+      "type": "text",
+      "labels": {
+        "en": "Farmer name",
+        "hi": "किसान का नाम",
+        "bn": "কৃষকের নাম"
+      }
+    },
+    {
+      "id": "amount",
+      "type": "amount",
+      "min": 1000,
+      "max": 500000,
+      "labels": {
+        "en": "Loan amount",
+        "hi": "ऋण राशि",
+        "bn": "ঋণের পরিমাণ"
+      }
+    },
+    {
+      "id": "otp",
+      "type": "digits",
+      "len": 6,
+      "sensitive": true,
+      "labels": {
+        "en": "OTP",
+        "hi": "ओटीपी",
+        "bn": "ওটিপি"
+      }
+    }
+  ]
+}

@@ -1,1 +1,2 @@
-globalThis.ALLOWED_HOSTS = ["127.0.0.1", "localhost"];
+globalThis.ALLOWED_HOSTS = ["127.0.0.1", "axisbank.com", "bankofbaroda.bank.in", "bankofindia.bank.in", "canarabank.bank.in", "hdfcbank.com", "icicibank.com", "idbi.com", "indianbank.bank.in", "localhost", "nfsa.gov.in", "nsap.dord.gov.in", "pmkisan.gov.in", "pnb.bank.in", "sbi.bank.in", "uco.bank.in", "udyamregistration.gov.in", "unionbankofindia.bank.in"];
+globalThis.ALLOWED_DOMAINS = ["axisbank.com", "bankofbaroda.bank.in", "bankofindia.bank.in", "canarabank.bank.in", "hdfcbank.com", "icicibank.com", "idbi.com", "indianbank.bank.in", "nfsa.gov.in", "nsap.dord.gov.in", "pmkisan.gov.in", "pnb.bank.in", "sbi.bank.in", "uco.bank.in", "udyamregistration.gov.in", "unionbankofindia.bank.in"];

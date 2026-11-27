@@ -1,1 +1,52 @@
-{"id":"ration_mock","domain":"civil_services","service":"ration_card","title":"Ration Card Portal (DEMO)","url":"/mock/ration","domains_allowed":["localhost","127.0.0.1"],"fields":[{"id":"name","type":"text","labels":{"en":"Name","hi":"नाम","bn":"নাম"}},{"id":"members","type":"number","min":1,"max":20,"labels":{"en":"Family members","hi":"परिवार के सदस्य","bn":"পরিবারের সদস্য"}},{"id":"otp","type":"digits","len":6,"sensitive":true,"labels":{"en":"OTP","hi":"ओटीपी","bn":"ওটিপি"}}]}
+{
+  "id": "ration_mock",
+  "domain": "civil_services",
+  "service": "ration_card",
+  "title": "Ration Card Portal (DEMO)",
+  "url": "/mock/ration",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": "https://nfsa.gov.in/portal/apply",
+  "allowed_domains": [
+    "nfsa.gov.in"
+  ],
+  "mock_url": "/mock/ration",
+  "login_required": false,
+  "fillable": true,
+  "notes": "NFSA directs applicants to their State/UT ration-card portal.",
+  "fields": [
+    {
+      "id": "name",
+      "type": "text",
+      "labels": {
+        "en": "Name",
+        "hi": "नाम",
+        "bn": "নাম"
+      }
+    },
+    {
+      "id": "members",
+      "type": "number",
+      "min": 1,
+      "max": 20,
+      "labels": {
+        "en": "Family members",
+        "hi": "परिवार के सदस्य",
+        "bn": "পরিবারের সদস্য"
+      }
+    },
+    {
+      "id": "otp",
+      "type": "digits",
+      "len": 6,
+      "sensitive": true,
+      "labels": {
+        "en": "OTP",
+        "hi": "ओटीपी",
+        "bn": "ওটিপি"
+      }
+    }
+  ]
+}

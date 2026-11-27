@@ -1,1 +1,6 @@
-[{"id":"kcc","name":"Kisan Credit Card","aliases":["kcc","kisan credit","কিষান ক্রেডিট"]},{"id":"pm_kisan","name":"PM-KISAN","aliases":["pm kisan","pm-kisan"]},{"id":"udyam","name":"Udyam Registration","aliases":["udyam","উদ্যম"]},{"id":"widow_pension","name":"Widow Pension","aliases":["widow pension","विधवा पेंशन","বিধবা পেনশন"]}]
+[
+  {"id":"kcc","name":"Kisan Credit Card","aliases":["kcc","kisan credit","কিষান ক্রেডিট"],"official_url":null,"allowed_domains":[],"login_required":true,"notes":"TODO: no single central KCC portal; apply through the selected bank."},
+  {"id":"pm_kisan","name":"PM-KISAN","aliases":["pm kisan","pm-kisan"],"official_url":"https://pmkisan.gov.in","allowed_domains":["pmkisan.gov.in"],"login_required":true,"notes":"Official PM-KISAN Samman Nidhi portal."},
+  {"id":"udyam","name":"Udyam Registration","aliases":["udyam","উদ্যম"],"official_url":"https://udyamregistration.gov.in","allowed_domains":["udyamregistration.gov.in"],"login_required":true,"notes":"Government of India MSME portal; the site warns that no other portal is official."},
+  {"id":"widow_pension","name":"Widow Pension","aliases":["widow pension","विधवा पेंशन","বিধবা পেনশন"],"official_url":"https://nsap.dord.gov.in","allowed_domains":["nsap.dord.gov.in"],"login_required":true,"notes":"NSAP (Ministry of Rural Development) portal; nsap.nic.in redirects here."}
+]

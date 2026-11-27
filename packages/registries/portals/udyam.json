@@ -1,1 +1,52 @@
-{"id":"udyam_mock","domain":"msme","service":"udyam","title":"Udyam Registration (DEMO)","url":"/mock/udyam","domains_allowed":["localhost","127.0.0.1"],"fields":[{"id":"business_name","type":"text","labels":{"en":"Business name","hi":"व्यवसाय का नाम","bn":"ব্যবসার নাম"}},{"id":"employees","type":"number","min":1,"max":10000,"labels":{"en":"Employees","hi":"कर्मचारी","bn":"কর্মী"}},{"id":"otp","type":"digits","len":6,"sensitive":true,"labels":{"en":"OTP","hi":"ओटीपी","bn":"ওটিপি"}}]}
+{
+  "id": "udyam_mock",
+  "domain": "msme",
+  "service": "udyam",
+  "title": "Udyam Registration (DEMO)",
+  "url": "/mock/udyam",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": "https://udyamregistration.gov.in",
+  "allowed_domains": [
+    "udyamregistration.gov.in"
+  ],
+  "mock_url": "/mock/udyam",
+  "login_required": true,
+  "fillable": true,
+  "notes": "Only the Government of India Udyam portal is official.",
+  "fields": [
+    {
+      "id": "business_name",
+      "type": "text",
+      "labels": {
+        "en": "Business name",
+        "hi": "व्यवसाय का नाम",
+        "bn": "ব্যবসার নাম"
+      }
+    },
+    {
+      "id": "employees",
+      "type": "number",
+      "min": 1,
+      "max": 10000,
+      "labels": {
+        "en": "Employees",
+        "hi": "कर्मचारी",
+        "bn": "কর্মী"
+      }
+    },
+    {
+      "id": "otp",
+      "type": "digits",
+      "len": 6,
+      "sensitive": true,
+      "labels": {
+        "en": "OTP",
+        "hi": "ओटीपी",
+        "bn": "ওটিপি"
+      }
+    }
+  ]
+}

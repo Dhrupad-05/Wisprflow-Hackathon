@@ -7,8 +7,10 @@ import re
 from enum import Enum
 from pathlib import Path
 
+from .confirmation import classify_confirmation
 from .entities import match_command, parse_amount, parse_digits, resolve_bank
 from .router import route
+from .sites import open_site_action, resolve_site, site_options
 
 ROOT = Path(__file__).resolve().parents[2]
 PORTAL_DIR = ROOT / "packages/registries/portals"
@@ -20,6 +22,10 @@ PORTAL_BY_SERVICE = {
     "old_age_pension": "pension.json",
     "ration_card": "ration.json",
     "udyam": "udyam.json",
+    "loan": "loan.json",
+    "account": "account.json",
+    "msme_loan": "msme_loan.json",
+    "pm_kisan": "pm_kisan.json",
 }
 
 
@@ -30,6 +36,7 @@ class State(str, Enum):
     PORTAL_OPEN = "PORTAL_OPEN"
     FORM_FILLING = "FORM_FILLING"
     CONFIRMING_FIELD = "CONFIRMING_FIELD"
+    CONFIRMING_INTENT = "CONFIRMING_INTENT"
     CONFIRMING = "CONFIRMING"
     SUBMITTED = "SUBMITTED"
     CANCELLED = "CANCELLED"
@@ -44,6 +51,14 @@ TRANSITIONS = {
     State.ROUTING: {
         "service_resolved": State.NARROWING,
         "portal_ready": State.FORM_FILLING,
+        "intent_resolved": State.CONFIRMING_INTENT,
+        "cancel": State.CANCELLED,
+    },
+    State.CONFIRMING_INTENT: {
+        "yes": State.PORTAL_OPEN,
+        "correction": State.CONFIRMING_INTENT,
+        "no": State.CONFIRMING_INTENT,
+        "intent_change": State.ROUTING,
         "cancel": State.CANCELLED,
     },
     State.NARROWING: {
@@ -54,6 +69,7 @@ TRANSITIONS = {
     State.PORTAL_OPEN: {
         "portal_ready": State.FORM_FILLING,
         "intent_change": State.ROUTING,
+        "new_task": State.ROUTING,
         "cancel": State.CANCELLED,
     },
     State.FORM_FILLING: {
@@ -161,6 +177,13 @@ def choices(session: dict) -> list[dict]:
     registry so a new bank needs no client change.
     """
 
+    if session.get("site_options"):
+        return session["site_options"]
+    if session.get("tap_required"):
+        return [
+            {"id": "yes", "label": "Yes", "type": "confirm"},
+            {"id": "no", "label": "No", "type": "confirm"},
+        ]
     if session.get("state") != State.NARROWING.value:
         return []
     return [
@@ -209,6 +232,9 @@ def _language_text(language: str, key: str) -> str:
             "greeting": "What do you need help with?",
             "bank": "Which bank should we use? You can say any.",
             "confirm": "Is this correct? Say yes or no.",
+            "change": "Okay. What should I change: the bank or the amount?",
+            "tap": "Please tap Yes or No.",
+            "escalate": "I still did not catch an answer.",
             "sensitive": "Please type this yourself. Say ho gaya when finished.",
             "done": "The demo form was submitted. Please type the OTP yourself.",
             "cancel": "Okay, I stopped this task.",
@@ -218,6 +244,9 @@ def _language_text(language: str, key: str) -> str:
             "greeting": "आपको किस काम में मदद चाहिए?",
             "bank": "कौन सा बैंक लें? आप कोई भी कह सकते हैं।",
             "confirm": "क्या यह सही है? हाँ या नहीं बोलिए।",
+            "change": "ठीक है। क्या बदलना है: बैंक या राशि?",
+            "tap": "हाँ या नहीं पर टैप करें।",
+            "escalate": "मुझे जवाब नहीं मिला।",
             "sensitive": "इसे खुद टाइप करें। हो गया बोलें।",
             "done": "डेमो फॉर्म जमा हुआ। OTP खुद टाइप करें।",
             "cancel": "ठीक है, यह काम रोक दिया।",
@@ -227,6 +256,9 @@ def _language_text(language: str, key: str) -> str:
             "greeting": "আপনার কী সাহায্য দরকার?",
             "bank": "কোন ব্যাংক নেব? আপনি যে কোনও বলতে পারেন।",
             "confirm": "এটা কি ঠিক আছে? হ্যাঁ বা না বলুন।",
+            "change": "ঠিক আছে। কী বদলাব: ব্যাংক না টাকার পরিমাণ?",
+            "tap": "হ্যাঁ বা না-তে ট্যাপ করুন।",
+            "escalate": "আমি উত্তর পাইনি।",
             "sensitive": "এটি নিজে টাইপ করুন। হয়ে গেলে বলুন।",
             "done": "ডেমো ফর্ম জমা হয়েছে। OTP নিজে টাইপ করুন।",
             "cancel": "ঠিক আছে, কাজটি থামিয়ে দিলাম।",
@@ -255,7 +287,20 @@ def _action(action_type: str, **values) -> dict:
 
 
 def _response(session: dict, prompt: str, actions: list[dict] | None = None) -> dict:
-    return {"prompt_text": prompt, "state": session["state"], "actions": actions or []}
+    actions = list(actions or [])
+    history = session.setdefault("_prompt_history", [])
+    confirming = session.get("state") in {
+        State.CONFIRMING.value,
+        State.CONFIRMING_FIELD.value,
+        State.CONFIRMING_INTENT.value,
+    }
+    if confirming and history and history[-1] == prompt:
+        # Loop guard: never emit the identical confirmation twice; switch to taps.
+        session["tap_required"] = True
+        prompt = f"{prompt} Tap Yes or No below."
+    history.append(prompt)
+    del history[:-4]
+    return {"prompt_text": prompt, "state": session["state"], "actions": actions}
 
 
 def _reset_for_task(session: dict, language: str) -> None:
@@ -281,6 +326,164 @@ def _reset_for_task(session: dict, language: str) -> None:
         session["entities"]["bank"] = safe_bank
 
 
+def _mentioned_amount(text: str) -> float | None:
+    value = parse_amount(text)
+    if value is not None:
+        return float(value)
+    match = re.search(
+        r"(?:₹|rs\.?)?\s*(\d{1,3}(?:,\d{2,3})+|\d{3,})(?:\.\d+)?", text, flags=re.I
+    )
+    if not match:
+        return None
+    return float(match.group(1).replace(",", ""))
+
+
+def _intent_summary(session: dict, pending: dict | None = None) -> str:
+    pending = pending or session.get("pending_confirmation", {})
+    bank = next((b["name"] for b in BANKS if b["id"] == pending.get("bank")), None)
+    parts = [bank] if bank else []
+    parts.append(str(pending.get("service") or "this task").replace("_", " "))
+    if pending.get("amount") is not None:
+        parts.append(f"for ₹{float(pending['amount']):,.0f}")
+    summary = " ".join(parts)
+    return summary[:1].upper() + summary[1:]
+
+
+def _ask_intent(session: dict, language: str, prefix: str = "") -> dict:
+    pending = session.setdefault("pending_confirmation", {})
+    if "service" not in pending:
+        pending.update(
+            {
+                "kind": "intent",
+                "service": session.get("service"),
+                "bank": session.get("entities", {}).get("bank"),
+                "amount": session.get("entities", {}).get("amount"),
+                "attempts": 0,
+            }
+        )
+    pending["attempts"] = pending.get("attempts", 0) + 1
+    session["state"] = State.CONFIRMING_INTENT.value
+    summary = _intent_summary(session)
+    attempt = pending["attempts"]
+    if attempt == 1:
+        prompt = f"{prefix}{summary}. {_language_text(language, 'confirm')}"
+    elif attempt == 2:
+        prompt = f"{summary}. {_language_text(language, 'tap')}"
+    else:
+        session["tap_required"] = True
+        prompt = f"{_language_text(language, 'escalate')} {summary}. {_language_text(language, 'tap')}"
+    actions = []
+    if session.get("service"):
+        actions.append(
+            _action("OPEN_PORTAL", portal=_portal(session["service"])["id"])
+        )
+    return _response(session, prompt, actions)
+
+
+def _apply_correction(session: dict, text: str, language: str) -> dict:
+    pending = session["pending_confirmation"]
+    amount = _mentioned_amount(text)
+    if amount is not None:
+        pending["amount"] = amount
+        session["entities"]["amount"] = amount
+    bank = resolve_bank(text)
+    if bank:
+        pending["bank"] = bank["id"]
+        session["entities"]["bank"] = bank["id"]
+    result = route(text)
+    if result["service"] and result["confidence"] >= 0.9:
+        if result["service"] != pending.get("service") and _portal(
+            result["service"]
+        )["fields"]:
+            bank = session.get("entities", {}).get("bank")
+            _reset_for_task(session, language)
+            if bank:
+                session["entities"]["bank"] = bank
+            return _start_route(session, text, language)
+        pending["service"] = result["service"]
+        session["service"] = result["service"]
+        session["domain"] = result["domain"]
+    pending["attempts"] = 0
+    pending.pop("correction_asked", None)
+    return _ask_intent(session, language, prefix="Updated. ")
+
+
+def _advance_intent(session: dict, language: str) -> dict:
+    pending = session.get("pending_confirmation", {})
+    summary = _intent_summary(session, pending)
+    service = pending.get("service") or session.get("service")
+    session["confirmed_intent"] = {
+        "service": service,
+        "bank": pending.get("bank"),
+        "amount": pending.get("amount"),
+    }
+    session.pop("pending_confirmation", None)
+    session.pop("tap_required", None)
+    if (
+        not session["entities"].get("bank")
+        and service in {"deposit", "kcc_loan", "loan", "msme_loan"}
+    ):
+        session["state"] = State.NARROWING.value
+        return _response(session, f"{summary}. {_language_text(language, 'bank')}")
+    session["state"] = State.PORTAL_OPEN.value
+    site = resolve_site(
+        service,
+        pending.get("bank") or session["entities"].get("bank"),
+        query=f"{pending.get('bank') or ''} {service or ''}",
+    )
+    if site is None:
+        session["site_options"] = [
+            {"id": option["id"], "label": option["title"], "url": option["url"]}
+            for option in site_options(f"{service or ''}", 3)
+        ]
+        if session["site_options"]:
+            return _response(session, "Which site should I open? Tap one or say its name.")
+        session.pop("tap_required", None)
+        return _response(session, "I do not have an official site for that yet. Tell me the portal name.")
+    session.pop("tap_required", None)
+    session["site"] = site
+    guidance = (
+        " I will point at the fields; type OTP and passwords yourself."
+        if site["mode"] == "guide"
+        else ""
+    )
+    return _response(
+        session,
+        f"{site['title']} is open.{guidance} Tell me when you are on the form.",
+        [open_site_action(site)],
+    )
+
+
+def _confirm_intent(session: dict, text: str, language: str, trigger: str) -> dict:
+    pending = session["pending_confirmation"]
+    if trigger == "pause":
+        return _ask_intent(session, language)
+    verdict = classify_confirmation(text)
+    if verdict == "yes":
+        return _advance_intent(session, language)
+    if verdict == "correction":
+        return _apply_correction(session, text, language)
+    if verdict == "no":
+        if not pending.get("correction_asked"):
+            pending["correction_asked"] = True
+            return _response(session, _language_text(language, "change"))
+        session["tap_required"] = True
+        return _response(
+            session,
+            _language_text(language, "escalate"),
+            [
+                _action(
+                    "CHOICES",
+                    choices=[
+                        {"id": "yes", "label": "Yes"},
+                        {"id": "no", "label": "No"},
+                    ],
+                )
+            ],
+        )
+    return _ask_intent(session, language)
+
+
 def _start_route(session: dict, text: str, language: str) -> dict:
     result = route(text)
     if result["service"] is None:
@@ -293,6 +496,9 @@ def _start_route(session: dict, text: str, language: str) -> dict:
     session["service"] = result["service"]
     session["entities"].update(result["entities"])
     session["field_index"] = 0
+    amount = _mentioned_amount(text)
+    if amount is not None and session["entities"].get("amount") is None:
+        session["entities"]["amount"] = amount
     if "bank" not in session["entities"] and result["service"] in {
         "deposit",
         "kcc_loan",
@@ -301,6 +507,11 @@ def _start_route(session: dict, text: str, language: str) -> dict:
     }:
         session["state"] = State.NARROWING.value
         return _response(session, _language_text(language, "bank"))
+    if not _fields(session):
+        # No demo form exists for this service (for example a bank loan), so
+        # confirm the intent once and then open the page. Previously this fell
+        # into FORM_FILLING with zero fields and re-asked forever.
+        return _ask_intent(session, language)
     session["state"] = State.FORM_FILLING.value
     return _response(
         session,
@@ -332,6 +543,8 @@ def _select_bank(session: dict, text: str, language: str) -> dict:
     else:
         choice = f"{bank['name']} selected. "
     session["entities"]["bank"] = bank["id"]
+    if not _fields(session):
+        return _ask_intent(session, language, prefix=choice)
     session["state"] = State.FORM_FILLING.value
     return _response(
         session,
@@ -397,7 +610,14 @@ def _summary(session: dict) -> str:
 def _fill_field(session: dict, text: str, language: str, trigger: str) -> dict:
     field = _current_field(session)
     if field is None:
-        return _response(session, _language_text(language, "confirm"))
+        # A form-less service must confirm once and move on, never re-ask.
+        session["state"] = State.CONFIRMING.value
+        summary = _summary(session)
+        return _response(
+            session,
+            f"{summary}. {_language_text(language, 'confirm')}",
+            [_action("SHOW_SUMMARY", masked_summary=summary)],
+        )
     if field.get("sensitive") and session.get("privacy_pending"):
         command = match_command(text)
         if command in {"yes", "no"}:
@@ -469,8 +689,9 @@ def _confirm_field(session: dict, text: str, language: str, trigger: str) -> dic
                 f"{summary}. {_language_text(language, 'confirm')}",
                 [_action("SHOW_SUMMARY", masked_summary=summary)],
             )
+    verdict = classify_confirmation(text)
     command = match_command(text)
-    if command is None:
+    if verdict in {"correction", "other"}:
         # Dictating a corrected number re-reads it without forcing retry/back.
         corrected = None
         field = _current_field(session)
@@ -492,7 +713,7 @@ def _confirm_field(session: dict, text: str, language: str, trigger: str) -> dic
                 session,
                 f"I heard {_label(field, language)}: {readback}. {_language_text(language, 'confirm')}",
             )
-    if command == "yes":
+    if verdict == "yes" or command == "yes":
         field = _current_field(session)
         value = session.pop("pending_value")
         session.pop("pending_field", None)
@@ -501,7 +722,7 @@ def _confirm_field(session: dict, text: str, language: str, trigger: str) -> dic
         return _advance_field(
             session, language, _action("FILL_FIELD", field=field["id"], value=value)
         )
-    if command == "no":
+    if verdict == "no" or command == "no":
         session.pop("pending_value", None)
         session.pop("pending_field", None)
         session["state"] = State.FORM_FILLING.value
@@ -547,6 +768,54 @@ def handle(session: dict, text: str, lang: str = "en", trigger: str = "typed") -
     if session["state"] in {State.SUBMITTED.value, State.CANCELLED.value}:
         _reset_for_task(session, lang)
         return _start_route(session, text, lang)
+    if session["state"] == State.CONFIRMING_INTENT.value:
+        if "pending_confirmation" not in session:
+            _advance_intent(session, lang)
+        return _confirm_intent(session, text, lang, trigger)
+    if session["state"] == State.PORTAL_OPEN.value:
+        options = session.get("site_options") or []
+        if options:
+            chosen = next(
+                (
+                    option
+                    for option in options
+                    if option["label"].lower() in text.lower()
+                    or option["id"].lower() in text.lower()
+                ),
+                None,
+            )
+            if chosen:
+                session.pop("site_options", None)
+                site = next(
+                    (
+                        item
+                        for item in site_options(chosen["label"], 3)
+                        if item["id"] == chosen["id"]
+                    ),
+                    None,
+                )
+                if site:
+                    session["site"] = site
+                    return _response(
+                        session,
+                        f"Opening {site['title']}. Tell me when you are on the form.",
+                        [open_site_action(site)],
+                    )
+        if command == "yes":
+            return _response(session, "It is already open. Tell me what you need next.")
+        result = route(text)
+        if (
+            result["service"]
+            and result["service"] != session.get("service")
+            and result["confidence"] >= 0.8
+        ):
+            bank = session.get("entities", {}).get("bank")
+            _reset_for_task(session, lang)
+            if bank:
+                session["entities"]["bank"] = bank
+            return _start_route(session, text, lang)
+        title = _portal(session.get("service", "")).get("title") or "The page"
+        return _response(session, f"{title} is open. Tell me what you need next.")
     if session["state"] in {State.IDLE.value, State.ROUTING.value}:
         if session["state"] == State.IDLE.value:
             session["state"] = transition(State.IDLE, "route").value

@@ -1,0 +1,18 @@
+{
+  "id": "account_mock",
+  "domain": "banking",
+  "service": "account",
+  "title": "Bank account",
+  "url": "/mock/sbi/deposit",
+  "domains_allowed": [
+    "localhost",
+    "127.0.0.1"
+  ],
+  "official_url": null,
+  "allowed_domains": [],
+  "mock_url": null,
+  "login_required": true,
+  "fillable": false,
+  "notes": "Bank-specific account page: use the selected bank's official_url.",
+  "fields": []
+}
