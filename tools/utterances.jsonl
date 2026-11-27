@@ -1,0 +1,224 @@
+{"text": "I need a deposit", "label": "banking.deposit", "language": "en", "split": "dev", "named_entity": false}
+{"text": "help me save money", "label": "banking.deposit", "language": "en", "split": "dev", "named_entity": false}
+{"text": "I want to put money in my account", "label": "banking.deposit", "language": "en", "split": "dev", "named_entity": false}
+{"text": "make a cash deposit", "label": "banking.deposit", "language": "en", "split": "dev", "named_entity": false}
+{"text": "deposit money at SBI", "label": "banking.deposit", "language": "en", "split": "test", "named_entity": true}
+{"text": "I need an SBI deposit", "label": "banking.deposit", "language": "en", "split": "test", "named_entity": true}
+{"text": "please open a deposit form", "label": "banking.deposit", "language": "en", "split": "test", "named_entity": false}
+{"text": "I want to add money", "label": "banking.deposit", "language": "en", "split": "test", "named_entity": false}
+{"text": "मुझे जमा करना है", "label": "banking.deposit", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "पैसा जमा करना है", "label": "banking.deposit", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "खाते में पैसे डालने हैं", "label": "banking.deposit", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "नकद जमा करना है", "label": "banking.deposit", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "एसबीआई में जमा करना है", "label": "banking.deposit", "language": "hi", "split": "test", "named_entity": false}
+{"text": "मुझे जमा फॉर्म चाहिए", "label": "banking.deposit", "language": "hi", "split": "test", "named_entity": false}
+{"text": "बचत में पैसा डालना है", "label": "banking.deposit", "language": "hi", "split": "test", "named_entity": false}
+{"text": "जमा की मदद चाहिए", "label": "banking.deposit", "language": "hi", "split": "test", "named_entity": false}
+{"text": "আমার টাকা জমা দিতে হবে", "label": "banking.deposit", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "টাকা জমা করতে চাই", "label": "banking.deposit", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "অ্যাকাউন্টে টাকা দিতে চাই", "label": "banking.deposit", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "নগদ জমা দেব", "label": "banking.deposit", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "এসবিআইতে জমা দিতে চাই", "label": "banking.deposit", "language": "bn", "split": "test", "named_entity": true}
+{"text": "জমার ফর্ম চাই", "label": "banking.deposit", "language": "bn", "split": "test", "named_entity": false}
+{"text": "সঞ্চয় করতে চাই", "label": "banking.deposit", "language": "bn", "split": "test", "named_entity": false}
+{"text": "জমা করার সাহায্য চাই", "label": "banking.deposit", "language": "bn", "split": "test", "named_entity": false}
+{"text": "Ami SBI te deposit korte chai", "label": "banking.deposit", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "account mein taka jama karna hai", "label": "banking.deposit", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "please টাকা জমা নিতে help করুন", "label": "banking.deposit", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "SBI mein money deposit karna hai", "label": "banking.deposit", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "amar account e deposit chai", "label": "banking.deposit", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "जमा form please", "label": "banking.deposit", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "taka save korte chai", "label": "banking.deposit", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "deposit er help lagbe", "label": "banking.deposit", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "I am a farmer and need a loan", "label": "agriculture.kcc_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "farmer credit please", "label": "agriculture.kcc_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "I need Kisan Credit Card", "label": "agriculture.kcc_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "an agriculture loan", "label": "agriculture.kcc_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "loan for farming", "label": "agriculture.kcc_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "KCC help from SBI", "label": "agriculture.kcc_loan", "language": "en", "split": "test", "named_entity": true}
+{"text": "credit for my crops", "label": "agriculture.kcc_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "farmer loan application", "label": "agriculture.kcc_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "मैं किसान हूं और ऋण चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "dev", "named_entity": true}
+{"text": "किसान क्रेडिट कार्ड चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "dev", "named_entity": true}
+{"text": "खेती के लिए लोन चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "कृषि ऋण की मदद चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "फसल के लिए कर्ज चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "एसबीआई किसान लोन", "label": "agriculture.kcc_loan", "language": "hi", "split": "test", "named_entity": true}
+{"text": "किसान ऋण फॉर्म", "label": "agriculture.kcc_loan", "language": "hi", "split": "test", "named_entity": true}
+{"text": "खेती का क्रेडिट चाहिए", "label": "agriculture.kcc_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "আমি কৃষক, আমার ঋণ লাগবে", "label": "agriculture.kcc_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "কিষান ক্রেডিট কার্ড চাই", "label": "agriculture.kcc_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "চাষের জন্য ঋণ চাই", "label": "agriculture.kcc_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "কৃষি ঋণের সাহায্য চাই", "label": "agriculture.kcc_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "ফসলের জন্য ধার চাই", "label": "agriculture.kcc_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "এসবিআই কৃষক ঋণ", "label": "agriculture.kcc_loan", "language": "bn", "split": "test", "named_entity": true}
+{"text": "কৃষক ঋণের ফর্ম চাই", "label": "agriculture.kcc_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "চাষের ক্রেডিট দরকার", "label": "agriculture.kcc_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "Ami chashi amar loan lagbe", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "farmer ke liye KCC chahiye", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "krishi loan er help chai", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "SBI farmer credit please", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "chash er jonno loan chai", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "Kisan credit form do", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "amar crop loan lagbe", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "किसान loan चाहिए", "label": "agriculture.kcc_loan", "language": "code_mixed", "split": "test", "named_entity": true}
+{"text": "I need a business loan", "label": "msme.msme_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "loan for my small business", "label": "msme.msme_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "MSME credit for my unit", "label": "msme.msme_loan", "language": "en", "split": "dev", "named_entity": true}
+{"text": "working capital for business", "label": "msme.msme_loan", "language": "en", "split": "dev", "named_entity": false}
+{"text": "shop expansion loan", "label": "msme.msme_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "enterprise finance please", "label": "msme.msme_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "business funding help", "label": "msme.msme_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "loan for my company", "label": "msme.msme_loan", "language": "en", "split": "test", "named_entity": false}
+{"text": "मुझे व्यवसाय ऋण चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "छोटे कारोबार के लिए लोन चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "एमएसएमई क्रेडिट चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "दुकान बढ़ाने का ऋण चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "व्यापार के लिए पूंजी चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "कंपनी फंडिंग चाहिए", "label": "msme.msme_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "कारोबार लोन फॉर्म", "label": "msme.msme_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "उद्यम के लिए ऋण", "label": "msme.msme_loan", "language": "hi", "split": "test", "named_entity": false}
+{"text": "আমার ব্যবসার ঋণ দরকার", "label": "msme.msme_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "ছোট ব্যবসার জন্য লোন চাই", "label": "msme.msme_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "এমএসএমই ক্রেডিট চাই", "label": "msme.msme_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "দোকান বাড়ানোর ঋণ চাই", "label": "msme.msme_loan", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "ব্যবসার মূলধন দরকার", "label": "msme.msme_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "কোম্পানির ফান্ডিং চাই", "label": "msme.msme_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "ব্যবসার ঋণের ফর্ম চাই", "label": "msme.msme_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "উদ্যোগের জন্য ঋণ চাই", "label": "msme.msme_loan", "language": "bn", "split": "test", "named_entity": false}
+{"text": "business ke liye loan chahiye", "label": "msme.msme_loan", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "amar small business er loan lagbe", "label": "msme.msme_loan", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "MSME credit please", "label": "msme.msme_loan", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "shop expand karne ka loan", "label": "msme.msme_loan", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "ব্যবসার loan চাই", "label": "msme.msme_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "company ke liye funding do", "label": "msme.msme_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "udhyam business loan", "label": "msme.msme_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "কারবারের জন্য loan chai", "label": "msme.msme_loan", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "I need Udyam registration", "label": "msme.udyam", "language": "en", "split": "dev", "named_entity": true}
+{"text": "register my business", "label": "msme.udyam", "language": "en", "split": "dev", "named_entity": false}
+{"text": "MSME registration help", "label": "msme.udyam", "language": "en", "split": "dev", "named_entity": true}
+{"text": "business registration form", "label": "msme.udyam", "language": "en", "split": "dev", "named_entity": false}
+{"text": "get an enterprise certificate", "label": "msme.udyam", "language": "en", "split": "test", "named_entity": false}
+{"text": "I want to register my company", "label": "msme.udyam", "language": "en", "split": "test", "named_entity": false}
+{"text": "small business registration", "label": "msme.udyam", "language": "en", "split": "test", "named_entity": false}
+{"text": "Udyam application", "label": "msme.udyam", "language": "en", "split": "test", "named_entity": true}
+{"text": "उद्यम पंजीकरण चाहिए", "label": "msme.udyam", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "मेरा व्यवसाय रजिस्टर करना है", "label": "msme.udyam", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "एमएसएमई पंजीकरण मदद", "label": "msme.udyam", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "व्यापार पंजीकरण फॉर्म", "label": "msme.udyam", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "उद्यम प्रमाणपत्र चाहिए", "label": "msme.udyam", "language": "hi", "split": "test", "named_entity": false}
+{"text": "कंपनी पंजीकरण करना है", "label": "msme.udyam", "language": "hi", "split": "test", "named_entity": false}
+{"text": "छोटे कारोबार का पंजीकरण", "label": "msme.udyam", "language": "hi", "split": "test", "named_entity": false}
+{"text": "उद्यम आवेदन चाहिए", "label": "msme.udyam", "language": "hi", "split": "test", "named_entity": false}
+{"text": "উদ্যোগ রেজিস্ট্রেশন চাই", "label": "msme.udyam", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "আমার ব্যবসা নিবন্ধন করতে চাই", "label": "msme.udyam", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "এমএসএমই নিবন্ধনের সাহায্য চাই", "label": "msme.udyam", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "ব্যবসার নিবন্ধন ফর্ম চাই", "label": "msme.udyam", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "উদ্যোগ সার্টিফিকেট চাই", "label": "msme.udyam", "language": "bn", "split": "test", "named_entity": false}
+{"text": "কোম্পানি রেজিস্ট্রেশন করব", "label": "msme.udyam", "language": "bn", "split": "test", "named_entity": false}
+{"text": "ছোট ব্যবসা নিবন্ধন", "label": "msme.udyam", "language": "bn", "split": "test", "named_entity": false}
+{"text": "উদ্যোগের আবেদন চাই", "label": "msme.udyam", "language": "bn", "split": "test", "named_entity": false}
+{"text": "Udyam registration karna hai", "label": "msme.udyam", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "amar business register korte chai", "label": "msme.udyam", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "MSME registration please", "label": "msme.udyam", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "company ka udyam form", "label": "msme.udyam", "language": "code_mixed", "split": "dev", "named_entity": true}
+{"text": "ব্যবসা registration help", "label": "msme.udyam", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "enterprise certificate chahiye", "label": "msme.udyam", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "small business register karna hai", "label": "msme.udyam", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "উদ্যোগ form চাই", "label": "msme.udyam", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "I need widow pension", "label": "social_welfare.widow_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "pension for a widow", "label": "social_welfare.widow_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "help with widow benefits", "label": "social_welfare.widow_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "social welfare widow form", "label": "social_welfare.widow_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "my widow pension application", "label": "social_welfare.widow_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "widow support scheme", "label": "social_welfare.widow_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "apply for widow pension", "label": "social_welfare.widow_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "widow allowance help", "label": "social_welfare.widow_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "विधवा पेंशन चाहिए", "label": "social_welfare.widow_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "विधवा के लिए पेंशन", "label": "social_welfare.widow_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "विधवा लाभ की मदद", "label": "social_welfare.widow_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "विधवा पेंशन फॉर्म", "label": "social_welfare.widow_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "मेरी विधवा पेंशन", "label": "social_welfare.widow_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "विधवा सहायता योजना", "label": "social_welfare.widow_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "विधवा पेंशन आवेदन", "label": "social_welfare.widow_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "विधवा भत्ता चाहिए", "label": "social_welfare.widow_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "বিধবা পেনশন চাই", "label": "social_welfare.widow_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বিধবার জন্য পেনশন", "label": "social_welfare.widow_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বিধবা ভাতার সাহায্য চাই", "label": "social_welfare.widow_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বিধবা পেনশনের ফর্ম", "label": "social_welfare.widow_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "আমার বিধবা পেনশন", "label": "social_welfare.widow_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "বিধবা সহায়তা প্রকল্প", "label": "social_welfare.widow_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "বিধবা পেনশনের আবেদন", "label": "social_welfare.widow_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "বিধবা ভাতা চাই", "label": "social_welfare.widow_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "widow pension chahiye", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "amar widow pension lagbe", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "विधवा pension help", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "বিধবা pension form chai", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "widow benefits ke liye help", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "pension for widow please", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "vidhwa scheme batao", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "বিধবা allowance চাই", "label": "social_welfare.widow_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "I need old age pension", "label": "social_welfare.old_age_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "senior citizen pension", "label": "social_welfare.old_age_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "pension for my elderly parent", "label": "social_welfare.old_age_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "old age benefits help", "label": "social_welfare.old_age_pension", "language": "en", "split": "dev", "named_entity": false}
+{"text": "apply for age pension", "label": "social_welfare.old_age_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "elder welfare pension", "label": "social_welfare.old_age_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "my old age pension form", "label": "social_welfare.old_age_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "retirement support scheme", "label": "social_welfare.old_age_pension", "language": "en", "split": "test", "named_entity": false}
+{"text": "वृद्धावस्था पेंशन चाहिए", "label": "social_welfare.old_age_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "बुजुर्ग पेंशन चाहिए", "label": "social_welfare.old_age_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "मेरे माता पिता की पेंशन", "label": "social_welfare.old_age_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "बुढ़ापे के लाभ की मदद", "label": "social_welfare.old_age_pension", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "आयु पेंशन आवेदन", "label": "social_welfare.old_age_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "वरिष्ठ नागरिक पेंशन", "label": "social_welfare.old_age_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "वृद्ध पेंशन फॉर्म", "label": "social_welfare.old_age_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "बुजुर्ग सहायता योजना", "label": "social_welfare.old_age_pension", "language": "hi", "split": "test", "named_entity": false}
+{"text": "বৃদ্ধ বয়সের পেনশন চাই", "label": "social_welfare.old_age_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বয়স্ক নাগরিকের পেনশন", "label": "social_welfare.old_age_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বাবা মায়ের পেনশন চাই", "label": "social_welfare.old_age_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বৃদ্ধ ভাতার সাহায্য চাই", "label": "social_welfare.old_age_pension", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "বয়স পেনশনের আবেদন", "label": "social_welfare.old_age_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "বয়স্ক পেনশন ফর্ম", "label": "social_welfare.old_age_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "প্রবীণ সহায়তা প্রকল্প", "label": "social_welfare.old_age_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "বৃদ্ধ পেনশন দরকার", "label": "social_welfare.old_age_pension", "language": "bn", "split": "test", "named_entity": false}
+{"text": "old age pension chahiye", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "amar elderly parent er pension lagbe", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "বৃদ্ধ pension help", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "senior citizen pension form", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "बुजुर्ग pension चाहिए", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "age benefit er help chai", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "old pension apply karna hai", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "বয়স্ক scheme চাই", "label": "social_welfare.old_age_pension", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "I need a ration card", "label": "civil_services.ration_card", "language": "en", "split": "dev", "named_entity": false}
+{"text": "apply for ration card", "label": "civil_services.ration_card", "language": "en", "split": "dev", "named_entity": false}
+{"text": "food card help", "label": "civil_services.ration_card", "language": "en", "split": "dev", "named_entity": false}
+{"text": "ration application for my family", "label": "civil_services.ration_card", "language": "en", "split": "dev", "named_entity": false}
+{"text": "new ration card form", "label": "civil_services.ration_card", "language": "en", "split": "test", "named_entity": false}
+{"text": "government food card", "label": "civil_services.ration_card", "language": "en", "split": "test", "named_entity": false}
+{"text": "ration card correction", "label": "civil_services.ration_card", "language": "en", "split": "test", "named_entity": false}
+{"text": "help with ration service", "label": "civil_services.ration_card", "language": "en", "split": "test", "named_entity": false}
+{"text": "राशन कार्ड चाहिए", "label": "civil_services.ration_card", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "राशन कार्ड के लिए आवेदन", "label": "civil_services.ration_card", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "खाद्य कार्ड की मदद", "label": "civil_services.ration_card", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "परिवार का राशन आवेदन", "label": "civil_services.ration_card", "language": "hi", "split": "dev", "named_entity": false}
+{"text": "नया राशन कार्ड फॉर्म", "label": "civil_services.ration_card", "language": "hi", "split": "test", "named_entity": false}
+{"text": "सरकारी राशन कार्ड", "label": "civil_services.ration_card", "language": "hi", "split": "test", "named_entity": false}
+{"text": "राशन कार्ड सुधार", "label": "civil_services.ration_card", "language": "hi", "split": "test", "named_entity": false}
+{"text": "राशन सेवा में मदद", "label": "civil_services.ration_card", "language": "hi", "split": "test", "named_entity": false}
+{"text": "রেশন কার্ড চাই", "label": "civil_services.ration_card", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "রেশন কার্ডের আবেদন", "label": "civil_services.ration_card", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "খাদ্য কার্ডের সাহায্য চাই", "label": "civil_services.ration_card", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "পরিবারের রেশন আবেদন", "label": "civil_services.ration_card", "language": "bn", "split": "dev", "named_entity": false}
+{"text": "নতুন রেশন কার্ড ফর্ম", "label": "civil_services.ration_card", "language": "bn", "split": "test", "named_entity": false}
+{"text": "সরকারি খাদ্য কার্ড", "label": "civil_services.ration_card", "language": "bn", "split": "test", "named_entity": false}
+{"text": "রেশন কার্ড সংশোধন", "label": "civil_services.ration_card", "language": "bn", "split": "test", "named_entity": false}
+{"text": "রেশন পরিষেবার সাহায্য", "label": "civil_services.ration_card", "language": "bn", "split": "test", "named_entity": false}
+{"text": "ration card chahiye", "label": "civil_services.ration_card", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "amar ration card apply korte chai", "label": "civil_services.ration_card", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "খাদ্য card help চাই", "label": "civil_services.ration_card", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "family ke liye ration form", "label": "civil_services.ration_card", "language": "code_mixed", "split": "dev", "named_entity": false}
+{"text": "राशन card correction", "label": "civil_services.ration_card", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "food card er help chai", "label": "civil_services.ration_card", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "new ration card please", "label": "civil_services.ration_card", "language": "code_mixed", "split": "test", "named_entity": false}
+{"text": "রেশন service চাই", "label": "civil_services.ration_card", "language": "code_mixed", "split": "test", "named_entity": false}

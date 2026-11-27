@@ -1,0 +1,15 @@
+[
+  {"id":"sbi","name":"State Bank of India","aliases":["sbi","esbiai","state bank","स्टेट बैंक","স্টেট ব্যাংক"]},
+  {"id":"uco","name":"UCO Bank","aliases":["uco","yuko","यूको बैंक"]},
+  {"id":"pnb","name":"Punjab National Bank","aliases":["pnb","punjab national","पीएनबी","पंजाब नेशनल"]},
+  {"id":"bob","name":"Bank of Baroda","aliases":["bob","baroda bank","बैंक ऑफ बड़ौदा"]},
+  {"id":"canara","name":"Canara Bank","aliases":["canara","kanara","केनरा बैंक"]},
+  {"id":"hdfc","name":"HDFC Bank","aliases":["hdfc","h d f c","एचडीएफसी"]},
+  {"id":"icici","name":"ICICI Bank","aliases":["icici","i c i c i","आईसीआईसीआई"]},
+  {"id":"axis","name":"Axis Bank","aliases":["axis","अॅक्सिस बैंक","एक्सिस बैंक"]},
+  {"id":"indian","name":"Indian Bank","aliases":["indian bank","इंडियन बैंक"]},
+  {"id":"union","name":"Union Bank of India","aliases":["union bank","यूनियन बैंक"]},
+  {"id":"boi","name":"Bank of India","aliases":["boi","bank of india","बैंक ऑफ इंडिया"]},
+  {"id":"idbi","name":"IDBI Bank","aliases":["idbi","आईडीबीआई"]},
+  {"id":"grameen","name":"Gramin Bank","aliases":["gramin bank","grameen bank","ग्रामीण बैंक"]}
+]

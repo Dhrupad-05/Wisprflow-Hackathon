@@ -1,0 +1,14 @@
+{
+  "domains": [
+    {"id":"agriculture","label":"Agriculture","services":["pm_kisan","kcc_loan","subsidy","crop_insurance"],"keywords":{"en":["farmer","crop","kisan","pm kisan"],"hi":["किसान","फसल","पीएम किसान"],"bn":["কৃষক","ফসল","পিএম কিষান"]}},
+    {"id":"banking","label":"Banking and finance","services":["deposit","loan","account","enquiry"],"keywords":{"en":["bank","deposit","loan","account"],"hi":["बैंक","जमा","ऋण","खाता"],"bn":["ব্যাংক","জমা","ঋণ","অ্যাকাউন্ট"]}},
+    {"id":"msme","label":"MSME and small business","services":["udyam","msme_loan","subsidy"],"keywords":{"en":["business","msme","udyam"],"hi":["व्यवसाय","उद्यम"],"bn":["ব্যবসা","উদ্যম"]}},
+    {"id":"social_welfare","label":"Social welfare","services":["old_age_pension","widow_pension","disability"],"keywords":{"en":["pension","widow","disability"],"hi":["पेंशन","विधवा","दिव्यांग"],"bn":["পেনশন","বিধবা","প্রতিবন্ধী"]}},
+    {"id":"civil_services","label":"Civil services","services":["ration_card","certificate","grievance"],"keywords":{"en":["ration","certificate","complaint"],"hi":["राशन","प्रमाणपत्र","शिकायत"],"bn":["রেশন","শংসাপত্র","অভিযোগ"]}}
+  ],
+  "actions":["open_form","check_status","clarify"],
+  "overlap_rules":[
+    {"phrase":"farmer loan","prefer":"agriculture.kcc_loan","also_offer":"agriculture.subsidy"},
+    {"phrase":"business loan","prefer":"msme.msme_loan","exclude":"banking.loan"}
+  ]
+}

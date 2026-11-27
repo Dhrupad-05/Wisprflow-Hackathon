@@ -1,0 +1,47 @@
+{
+  "split": "test",
+  "count": 112,
+  "accuracy": 0.9196428571428571,
+  "domain_accuracy": {
+    "agriculture": 1.0,
+    "banking": 1.0,
+    "civil_services": 1.0,
+    "msme": 0.78125,
+    "social_welfare": 1.0
+  },
+  "language_accuracy": {
+    "bn": 0.8214285714285714,
+    "code_mixed": 0.9285714285714286,
+    "en": 1.0,
+    "hi": 0.9285714285714286
+  },
+  "named_entity_accuracy": 1.0,
+  "named_entity_count": 9,
+  "confusion_matrix": {
+    "agriculture.kcc_loan": {
+      "agriculture.kcc_loan": 16
+    },
+    "banking.deposit": {
+      "banking.deposit": 16
+    },
+    "civil_services.ration_card": {
+      "civil_services.ration_card": 16
+    },
+    "msme.msme_loan": {
+      "msme.msme_loan": 8,
+      "banking.loan": 4,
+      "msme.udyam": 2,
+      "None.None": 2
+    },
+    "msme.udyam": {
+      "msme.udyam": 15,
+      "civil_services.ration_card": 1
+    },
+    "social_welfare.old_age_pension": {
+      "social_welfare.old_age_pension": 16
+    },
+    "social_welfare.widow_pension": {
+      "social_welfare.widow_pension": 16
+    }
+  }
+}

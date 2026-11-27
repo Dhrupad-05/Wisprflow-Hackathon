@@ -1,0 +1,8 @@
+expected\predicted,agriculture.kcc_loan,banking.deposit,civil_services.ration_card,msme.msme_loan,msme.udyam,social_welfare.old_age_pension,social_welfare.widow_pension
+agriculture.kcc_loan,16,0,0,0,0,0,0
+banking.deposit,0,16,0,0,0,0,0
+civil_services.ration_card,0,0,16,0,0,0,0
+msme.msme_loan,0,0,0,8,2,0,0
+msme.udyam,0,0,1,0,15,0,0
+social_welfare.old_age_pension,0,0,0,0,0,16,0
+social_welfare.widow_pension,0,0,0,0,0,0,16

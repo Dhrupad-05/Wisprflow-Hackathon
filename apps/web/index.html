@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bolo Sahayak</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="consent-gate" class="overlay">
+    <section class="consent-card" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+      <span class="eyebrow">BOLO SAHAYAK</span>
+      <h1 id="consent-title">Bolo Sahayak</h1>
+      <p id="consent-text">Your words stay in this demo session.</p>
+      <label class="field-label" for="consent-lang">Language
+        <select id="consent-lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select>
+      </label>
+      <button id="consent-yes" class="primary">Continue</button>
+    </section>
+  </div>
+  <main id="app" hidden>
+    <header class="topbar">
+      <div><span class="eyebrow">BOLO SAHAYAK</span><h1>Bolo Sahayak</h1></div>
+      <div class="top-actions"><span id="demo-badge" class="demo">DEMO MODE</span><label class="field-label" for="lang">Language<select id="lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select></label></div>
+    </header>
+    <section id="notice" class="notice" aria-live="polite"></section>
+    <div class="layout">
+      <section class="assistant-panel" aria-label="Assistant">
+        <div id="privacy-card" class="privacy-card" hidden><strong id="privacy-text"></strong><div id="privacy-chips" class="chips"></div></div>
+        <div class="controls"><label class="toggle"><input type="checkbox" id="private"> <span id="private-label">Private mode</span></label><label class="toggle"><input type="checkbox" id="slow"> <span id="slow-label">Slow speaker</span></label></div>
+        <div class="hero"><button id="mic" class="mic" aria-label="Start voice input">🎙️<span id="mic-label">Tap to speak</span></button><div id="status" class="status" aria-live="polite"></div></div>
+        <section class="conversation"><div class="heard"><span id="assistant-label">Assistant</span><strong id="prompt"></strong></div><div class="heard user"><span id="heard-label">You said</span><strong id="heard">—</strong></div><div id="summary" class="summary" hidden></div><div id="voice-note" class="voice-note" hidden></div></section>
+        <div id="quick-replies" class="chips"></div>
+        <form id="turn-form"><input id="text" autocomplete="off" placeholder="Type your answer" aria-label="Your response"><button id="send" class="primary">Send</button></form>
+        <div class="actions"><button id="wipe" class="secondary">Forget everything</button><button id="print" class="secondary">Print masked log</button></div>
+        <button id="sensitive-done" class="done-button" hidden>I’m done</button>
+      </section>
+      <section class="portal-panel" aria-label="Portal"><h2 id="portal-title">Portal preview</h2><p id="portal-empty">Your selected demo form will appear here.</p><iframe id="portal-frame" title="Demo portal" hidden></iframe></section>
+    </div>
+    <p class="fine">Mock portals only · Voice never authenticates · No audio is stored</p>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
